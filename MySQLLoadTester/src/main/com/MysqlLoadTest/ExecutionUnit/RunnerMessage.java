@@ -1,4 +1,4 @@
-package com.MysqlLoadTest.demo;
+package com.MysqlLoadTest.ExecutionUnit;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

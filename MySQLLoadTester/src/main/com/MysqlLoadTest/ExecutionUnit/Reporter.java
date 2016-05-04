@@ -1,4 +1,4 @@
-package com.MysqlLoadTest.demo;
+package com.MysqlLoadTest.ExecutionUnit;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -11,7 +11,7 @@ public class Reporter extends Thread{
 	private static Logger log = LogManager.getLogger(Reporter.class); 
 	private boolean stop = false;
 	private long previousReportTimeNS = 0;
-	private long reportIntervalNS = 1000000;//nanoseconds
+	private long reportIntervalNS = 1000000000;//nanoseconds
 	
 	private long totalExecution = 0;
 	//private long intervalExecution = 0;
@@ -35,12 +35,16 @@ public class Reporter extends Thread{
 		//This is to give a detailed summary about TPS info
 		long currentTime = System.nanoTime();
 		long currentExecutionCount = this.totalExecution;
-		if ( this.previousReportTimeNS != 0 && currentTime - this.previousReportTimeNS >= this.reportIntervalNS){
-			log.info("Total " +(currentExecutionCount-this.previousTotalExecution)+ " inserts for past " +(currentTime - this.previousReportTimeNS) / 1000000.0+ "ms" );
-		}
 		
-		this.previousReportTimeNS = currentTime;
-		this.previousTotalExecution = currentExecutionCount;
+		if ( this.previousReportTimeNS != 0 && currentTime - this.previousReportTimeNS >= this.reportIntervalNS){
+			log.debug("currentExecutionCount " + currentExecutionCount + "this.previousTotalExecution" +this.previousTotalExecution
+					+ " currentTime " +currentTime  + " this.previousReportTimeNS " + this.previousReportTimeNS);
+			log.info("Total " +(currentExecutionCount-this.previousTotalExecution)+ " inserts for past " +(currentTime - this.previousReportTimeNS) / 1000000.0+ "ms" );
+			
+			this.previousReportTimeNS = currentTime;
+			this.previousTotalExecution = currentExecutionCount;
+		}	
+
 	}
 	
 	public void run(){
@@ -55,6 +59,7 @@ public class Reporter extends Thread{
 					RunnerMessage runnerMessage = (RunnerMessage) o;
 					this.totalExecution += runnerMessage.intervalInsertCount;
 					log.debug(runnerMessage.toString());
+					if (this.previousReportTimeNS == 0){ this.previousReportTimeNS = System.nanoTime();}
 					//this.pause(1);
 				}
 			} catch (IOException | ClassNotFoundException | NullPointerException e) {

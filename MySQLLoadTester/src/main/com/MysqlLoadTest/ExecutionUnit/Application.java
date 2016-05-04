@@ -1,4 +1,4 @@
-package com.MysqlLoadTest.demo;
+package com.MysqlLoadTest.ExecutionUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,7 +15,7 @@ public class Application {
 		
 		
 		int totalThreads = 10;
-		int runCount = 10000;
+		int runCount = 10000000;
 		
 		Prepare prepare = new Prepare();
 		Runner[] instanceArray = new Runner[totalThreads];
