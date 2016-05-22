@@ -7,11 +7,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.io.*;
 import java.lang.Thread;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.MysqlLoadTest.Utilities.ConnectionManager;
+import com.MysqlLoadTest.Utilities.TestInfo;
 
 public class Runner extends Thread {
 	
@@ -27,14 +31,20 @@ public class Runner extends Thread {
 	private boolean finished = false;
 	private long previousReportDateNS = 0;
 	
-	private ObjectOutputStream outputPipe;
+	//private ObjectOutputStream outputPipe;
+	private ConcurrentLinkedDeque<RunnerMessage> queue;
+	
+	private TestInfo testInfo;
 	
 
-	public Runner(int threadID, int runCount){
+	public Runner(TestInfo testInfo,int threadID){
 		this.connect = ConnectionManager.getConnection();
-		this.outputPipe = PipeManager.getOutputPipe();
+		//this.outputPipe = PipeManager.getOutputPipe();
+		this.queue=PipeManager.getQueue();
 		this.threadID = threadID;
-		this.runCount = runCount;
+		this.testInfo = testInfo;
+		this.runCount = this.testInfo.getRunCount();
+
 	}
 	
 	private void reportProgress(){
@@ -46,15 +56,8 @@ public class Runner extends Thread {
 			runnerMessage.intervalInsertCount = this.reportInterval;
 			runnerMessage.reportInterval = System.nanoTime() - this.previousReportDateNS;
 			
-			try {
-				synchronized(this.outputPipe){
-					this.outputPipe.writeObject(runnerMessage);
-				}
-				log.debug("Progress reported from thread: " + this.threadID);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			this.queue.push(runnerMessage);
+			log.debug("Progress reported from thread: " + this.threadID);
 		}
 		
 		this.previousReportDateNS = System.nanoTime();

@@ -10,6 +10,8 @@ import java.sql.Statement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.MysqlLoadTest.Utilities.ConnectionManager;
+
 public class Prepare {
 
 	private static Logger log = LogManager.getLogger(Prepare.class); 

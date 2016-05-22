@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,13 +14,19 @@ public class PipeManager {
 	
 	private static Logger log = LogManager.getLogger(PipeManager.class); 
 
-	private static PipedOutputStream outputPipe = new PipedOutputStream();
+	/*private static PipedOutputStream outputPipe = new PipedOutputStream();
 	private static PipedInputStream inputPipe = new PipedInputStream();	
 	private static ObjectOutputStream objectOutputPipe = null;
-	private static ObjectInputStream objectInputPipe = null;
+	private static ObjectInputStream objectInputPipe = null;*/
+	
+	private static ConcurrentLinkedDeque<RunnerMessage> queue = new ConcurrentLinkedDeque<RunnerMessage>();
+
+	public static ConcurrentLinkedDeque<RunnerMessage> getQueue() {
+		return queue;
+	}
 	
 	
-	public static ObjectOutputStream getOutputPipe() { 
+	/*public static ObjectOutputStream getOutputPipe() { 
 		try {
 			if (objectOutputPipe == null){
 				outputPipe.connect(inputPipe);
@@ -43,5 +51,5 @@ public class PipeManager {
 		}
 		log.debug("Returning ObjectInputStream as client request");
 		return objectInputPipe; 
-		}
+		}*/
 }
