@@ -58,6 +58,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -70,7 +71,7 @@ public class Gui extends Application {
 	
 	private static Connection connect;
 	private static int testId =-1;
-	private static LineChart  lineChart = null;// = getLineChart();
+
 	
 	private static Logger log = LogManager.getLogger(Gui.class); 
 	
@@ -78,86 +79,15 @@ public class Gui extends Application {
         launch(args);
     }
 	
-	private static LineChart getLineChart(TestInfo testInfo, boolean refreshData){
-		connect = ConnectionManager.getConnection("testreport");
-		
-		if (refreshData||testId == -1)
-		{
-			try {
-				testId = com.MysqlLoadTest.ExecutionUnit.Application.runTest(testInfo);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		PreparedStatement preparedStatement = null;
-		ResultSet rs;
-		try {
-			preparedStatement = connect.prepareStatement("select "+
-							"a.systemNanoTime / 1000000, "+
-							"a.totalExecutionCount, "+
-							"a.totalExecutionCount - @lasttotalExecutionCount as intervalExecutionCount, "+
-							"@lasttotalExecutionCount := a.totalExecutionCount "+
-							"from testreport.testruntimeinfo a, "+
-							"(select @lasttotalExecutionCount := 0) SQLVars "+
-							"where testid = ?");
-			preparedStatement.setInt(1, testId);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-         //defining the axes
-         final NumberAxis xAxis = new NumberAxis();
-         final NumberAxis yAxis = new NumberAxis();
-         xAxis.setLabel("mili Seconds");
-         //creating the chart
-         final LineChart<Number,Number> lineChart = 
-                 new LineChart<Number,Number>(xAxis,yAxis);
-                 
-         lineChart.setTitle("query per second ");
-         //defining a series
-         XYChart.Series series = new XYChart.Series();
-         series.setName("test result");
-         //populating the series with data
-         
-         try {
-			rs = preparedStatement.executeQuery();
-			while (rs.next()){
-				
-				series.getData().add(new XYChart.Data(rs.getLong(1), rs.getLong(3)));
-				//log.info("insert data into graph: "+ rs.getLong(1) + " " + rs.getLong(3));
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-         /*series.getData().add(new XYChart.Data(1, 23));
-         series.getData().add(new XYChart.Data(12, 25));*/
-         
-         lineChart.getData().add(series);
-         
-         return lineChart;
-	}
+
     	
 	@Override public void start(Stage stage) {
 		
          
-   	 	stage.setTitle("Line Chart Sample");
+   	 	stage.setTitle("MySQL Load Tester");
          
          //////////////////////////////////////////////////////////////
-         
-         GridPane grid = new GridPane();
-   	 	BorderPane border = new BorderPane();
-   	 	
-   	 	
-
-         
-         
-         
-         
+   	 	BorderPane mainBorder = new BorderPane();
          
          TabPane tabPane = new TabPane();
          Tab tabNewTest = new Tab();
@@ -174,35 +104,47 @@ public class Gui extends Application {
 	         Label threadsLable = new Label("Concurrent Threads");
 	         TextField threadsTextField = new TextField();
 	         threadsTextField.setText("10");
-	         Label runCountLable = new Label("runCount Threads");
+	         Label runCountLable = new Label("runCount per Thread");
 	         TextField runCountTextField = new TextField();
 	         runCountTextField.setText("30000");
+	         
+	         Label commentLable = new Label("Test Comment");
+	         TextField commentTextField = new TextField();
+	         commentTextField.setText("");
 	         
 	         vboxNewTest.getChildren().add(threadsLable);
 	         vboxNewTest.getChildren().add(threadsTextField);
 	         vboxNewTest.getChildren().add(runCountLable);
 	         vboxNewTest.getChildren().add(runCountTextField);
-	         vboxNewTest.getChildren().add(tabPane);
+	         vboxNewTest.getChildren().add(commentLable);
+	         vboxNewTest.getChildren().add(commentTextField);
 	         
 	         Button buttonRun = new Button("Run Test");
 	         buttonRun.setPrefSize(100, 20);
 	         buttonRun.setOnMouseClicked( e -> {
 		        	 int threads = Integer.parseInt(threadsTextField.getText());
 		        	 int runCount = Integer.parseInt(runCountTextField.getText());
+		        	 String comment = commentTextField.getText();
 		        	 
 		        	 int testType = 1;
 		        	 
-		        	 TestInfo testInfo = new TestInfo(testType,threads,runCount);
+		        	 TestInfo testInfo = new TestInfo(testType,threads,runCount,comment);
 		        	 
-		        	 grid.getChildren().remove(lineChart);
-		        	 lineChart = getLineChart(testInfo, true);
-		        	 grid.add(lineChart, 0, 0);
+		        	 GraphManager.chartGrid.getChildren().remove(GraphManager.lineChart);
+		        	 
+		        	 
+		        	 int testId = DataManager.runTest(testInfo);
+		        	 ArrayList<Integer>  testIdArray = new ArrayList<Integer>();
+		        	 testIdArray.add(testId);
+		        	 GraphManager.lineChart = GraphManager.getLineChart(testIdArray);
+		        	 GraphManager.chartGrid.add(GraphManager.lineChart, 0, 0);
+		        	 GraphManager.existingTestBorder.setCenter(GraphManager.getExistingTestVbox());
 	         });
 
 	         Button buttonClear = new Button("Clear Result");
 	         buttonClear.setPrefSize(100, 20);
 	         buttonClear.setOnMouseClicked( e -> {
-	        	 grid.getChildren().remove(lineChart);
+	        	 GraphManager.chartGrid.getChildren().remove(GraphManager.lineChart);
 	         });
 	         
 	         vboxNewTest.getChildren().addAll(buttonRun,buttonClear);
@@ -213,28 +155,33 @@ public class Gui extends Application {
          tabPane.getTabs().add(tabNewTest);
          
          Tab tabExistingTest = new Tab();
-         	VBox vboxExistingTest = new VBox();
-         	vboxExistingTest.setPadding(new Insets(10)); // Set all sides to 10
-         	vboxExistingTest.setSpacing(8);              // Gap between nodes
-         	CheckBox checkBoxTest = new CheckBox("Test1");
-         	vboxExistingTest.getChildren().add(checkBoxTest);
+         	
+	         		         	
+	         	VBox vboxExistingTestInfo = new VBox();
+	         	vboxExistingTestInfo.setPadding(new Insets(10)); // Set all sides to 10
+	         	vboxExistingTestInfo.setSpacing(8);              // Gap between nodes
+	         	
+	         	vboxExistingTestInfo.getChildren().add(GraphManager.existingTestInfoLable);
+	         GraphManager.existingTestBorder.setCenter(GraphManager.getExistingTestVbox());
+	         GraphManager.existingTestBorder.setBottom(vboxExistingTestInfo);
+         	
          tabExistingTest.setText("Existing Tests");
-         tabExistingTest.setContent(vboxExistingTest);
+         tabExistingTest.setContent(GraphManager.existingTestBorder);
          tabExistingTest.setClosable(false);
          tabPane.getTabs().add(tabExistingTest);
          
-         border.setLeft(tabPane);
+         mainBorder.setLeft(tabPane);
          //border.setLeft(vbox);
 
          
          
-         grid.setHgap(10);
-         grid.setVgap(10);
-         grid.setPadding(new Insets(0, 10, 0, 10));
-         border.setCenter(grid);
+         GraphManager.chartGrid.setHgap(10);
+         GraphManager.chartGrid.setVgap(10);
+         GraphManager.chartGrid.setPadding(new Insets(0, 10, 0, 10));
+         mainBorder.setCenter(GraphManager.chartGrid);
 
 
-         Scene scene = new Scene(border);
+         Scene scene = new Scene(mainBorder);
          stage.setScene(scene);
          stage.setTitle("Load Test");
          

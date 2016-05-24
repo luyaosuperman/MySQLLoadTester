@@ -42,13 +42,14 @@ public class Reporter extends Thread{
 			PreparedStatement preparedStatement = 
 					this.connect.prepareStatement(
 					"insert into testInfo "
-					+ "(timestamp,testType,threads,runCount) values (now(),?,?,?)",
+					+ "(timestamp,testType,threads,runCount,comment) values (now(),?,?,?,?)",
 					Statement.RETURN_GENERATED_KEYS);
 			
 			//preparedStatement.setTimestamp(1, new java.sql.Timestamp(System.currentTimeMillis()));
 			preparedStatement.setInt(1, testInfo.getTestType());
 			preparedStatement.setInt(2, testInfo.getTotalThreads());
 			preparedStatement.setInt(3, testInfo.getRunCount());
+			preparedStatement.setString(4, testInfo.getComment());
 			
 			preparedStatement.executeUpdate();
 			

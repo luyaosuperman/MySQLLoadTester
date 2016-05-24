@@ -50,9 +50,9 @@ public class Application {
 	public static void main(String[] args) throws InterruptedException {
 		int testType = 1;
 		int totalThreads = 10;
-		int runCount = 30000;
+		int runCount = 3000;
 		
-		TestInfo testInfo = new TestInfo(testType,totalThreads,runCount);
+		TestInfo testInfo = new TestInfo(testType,totalThreads,runCount,"test");
 		
 		runTest(testInfo);
 

@@ -8,7 +8,7 @@ create table testInfo
 	testType  int unsigned not null,
 	threads int unsigned not null,
 	runCount  int unsigned not null,
-	comment text default null
+	comment text 
 );
 
 drop table if exists testRuntimeInfo;
