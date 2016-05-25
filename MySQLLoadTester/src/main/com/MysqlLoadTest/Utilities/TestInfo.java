@@ -11,6 +11,13 @@ public class TestInfo {
 	
 	private int testId = -1;
 	private Date testDate;
+	
+	/////////////////////////////////////////
+	//Extended Info
+	//Structure of Table(s)
+	//create table code
+	//select/insert/update
+	//init data amount
 
 	
 	public TestInfo(Object... arguments ){
@@ -26,58 +33,36 @@ public class TestInfo {
 	public int getRunCount() {
 		return runCount;
 	}
-
-
 	public void setRunCount(int runCount) {
 		this.runCount = runCount;
 	}
-
-
 	public int getTotalThreads() {
 		return totalThreads;
 	}
-
-
 	public void setTotalThreads(int totalThreads) {
 		this.totalThreads = totalThreads;
 	}
-
-
 	public int getTestType() {
 		return testType;
 	}
-
-
 	public void setTestType(int testType) {
 		this.testType = testType;
 	}
-
-
 	public int getTestId() {
 		return testId;
 	}
-
-
 	public void setTestId(int testId) {
 		this.testId = testId;
 	}
-
-
 	public String getComment() {
 		return comment;
 	}
-
-
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-
-
 	public Date getTestDate() {
 		return testDate;
 	}
-
-
 	public void setTestDate(Date testDate) {
 		this.testDate = testDate;
 	}

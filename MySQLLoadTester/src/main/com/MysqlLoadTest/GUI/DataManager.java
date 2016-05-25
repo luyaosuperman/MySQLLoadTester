@@ -14,6 +14,11 @@ import com.MysqlLoadTest.Utilities.TestInfo;
 
 public class DataManager {
 	
+	public static final int CHARTBYTIME = 0;
+	public static final int CHARTBYROW = 1;
+	
+	public static int chartType = CHARTBYTIME;
+	
 	public static int runTest(TestInfo testInfo){
 		int testId = 0;
    	 	try {
@@ -101,7 +106,10 @@ public class DataManager {
 			
 			rs = preparedStatement.executeQuery();
 			while (rs.next()){
-				long[] point ={rs.getLong(1), rs.getLong(3)};
+				long [] point = new long[2];
+				if      (chartType == CHARTBYTIME){point[0] = rs.getLong(1);}
+				else if (chartType == CHARTBYROW) {point[0] = rs.getLong(2);}
+				point[1] = rs.getLong(3);
 				result.add(point);
 			}
 			

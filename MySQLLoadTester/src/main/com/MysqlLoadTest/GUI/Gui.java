@@ -130,14 +130,14 @@ public class Gui extends Application {
 		        	 
 		        	 TestInfo testInfo = new TestInfo(testType,threads,runCount,comment);
 		        	 
-		        	 GraphManager.chartGrid.getChildren().remove(GraphManager.lineChart);
+		        	 //GraphManager.chartGrid.getChildren().remove(GraphManager.lineChart);
 		        	 
 		        	 
 		        	 int testId = DataManager.runTest(testInfo);
 		        	 ArrayList<Integer>  testIdArray = new ArrayList<Integer>();
 		        	 testIdArray.add(testId);
-		        	 GraphManager.lineChart = GraphManager.getLineChart(testIdArray);
-		        	 GraphManager.chartGrid.add(GraphManager.lineChart, 0, 0);
+		        	 GraphManager.getLineChart(testIdArray);
+		        	 //GraphManager.chartGrid.add(GraphManager.lineChart, 0, 0);
 		        	 GraphManager.existingTestBorder.setCenter(GraphManager.getExistingTestVbox());
 	         });
 
@@ -155,15 +155,8 @@ public class Gui extends Application {
          tabPane.getTabs().add(tabNewTest);
          
          Tab tabExistingTest = new Tab();
-         	
-	         		         	
-	         	VBox vboxExistingTestInfo = new VBox();
-	         	vboxExistingTestInfo.setPadding(new Insets(10)); // Set all sides to 10
-	         	vboxExistingTestInfo.setSpacing(8);              // Gap between nodes
-	         	
-	         	vboxExistingTestInfo.getChildren().add(GraphManager.existingTestInfoLable);
-	         GraphManager.existingTestBorder.setCenter(GraphManager.getExistingTestVbox());
-	         GraphManager.existingTestBorder.setBottom(vboxExistingTestInfo);
+	     GraphManager.existingTestBorder.setCenter(GraphManager.getExistingTestVbox());
+	     GraphManager.existingTestBorder.setBottom(GraphManager.getVboxExistingTestInfo());
          	
          tabExistingTest.setText("Existing Tests");
          tabExistingTest.setContent(GraphManager.existingTestBorder);
@@ -186,12 +179,6 @@ public class Gui extends Application {
          stage.setTitle("Load Test");
          
          stage.show();
-         
-         /*Scene scene  = new Scene(grid,1280,720);
-         
-        
-         stage.setScene(scene);
-         stage.show();*/
         
     }
 }

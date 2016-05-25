@@ -18,6 +18,7 @@ import com.MysqlLoadTest.Utilities.ConnectionManager;
 import com.MysqlLoadTest.Utilities.TestInfo;
 
 public class Runner extends Thread {
+//public class Runner implements Runnable  {
 	
 	private static Logger log = LogManager.getLogger(Runner.class); 
 
