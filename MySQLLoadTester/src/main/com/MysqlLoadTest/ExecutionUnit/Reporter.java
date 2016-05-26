@@ -43,6 +43,8 @@ public class Reporter extends Thread{
 					this.connect.prepareStatement(
 					"insert into testInfo "
 					+ "(timestamp,testType,threads,runCount,comment) values (now(),?,?,?,?)",
+					//TODO
+					marker
 					Statement.RETURN_GENERATED_KEYS);
 			
 			//preparedStatement.setTimestamp(1, new java.sql.Timestamp(System.currentTimeMillis()));
@@ -79,7 +81,6 @@ public class Reporter extends Thread{
 		this.referenceNanoSecond = System.nanoTime();
 		
 		connect = ConnectionManager.getConnection("testReport");
-		
 		this.preRunSummary();
 		
 	}

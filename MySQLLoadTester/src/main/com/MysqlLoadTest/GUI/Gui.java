@@ -128,16 +128,12 @@ public class Gui extends Application {
 		        	 
 		        	 int testType = 1;
 		        	 
-		        	 TestInfo testInfo = new TestInfo(testType,threads,runCount,comment);
-		        	 
-		        	 //GraphManager.chartGrid.getChildren().remove(GraphManager.lineChart);
-		        	 
-		        	 
-		        	 int testId = DataManager.runTest(testInfo);
+		        	 //DISABLE THE GUI
+		        	 //TestInfo testInfo = new TestInfo(testType,threads,runCount,comment);
+		        	 //int testId = DataManager.runTest(testInfo);
 		        	 ArrayList<Integer>  testIdArray = new ArrayList<Integer>();
 		        	 testIdArray.add(testId);
 		        	 GraphManager.getLineChart(testIdArray);
-		        	 //GraphManager.chartGrid.add(GraphManager.lineChart, 0, 0);
 		        	 GraphManager.existingTestBorder.setCenter(GraphManager.getExistingTestVbox());
 	         });
 

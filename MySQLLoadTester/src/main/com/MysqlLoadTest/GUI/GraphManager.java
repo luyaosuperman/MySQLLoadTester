@@ -75,7 +75,7 @@ public class GraphManager {
         for (int testId: testIdArray) {
         	
             XYChart.Series series = new XYChart.Series();
-            TestInfo testInfo = DataManager.getTestInfo(testId);
+            TestInfo testInfo = TestInfo.getTestInfo(testId);
             ArrayList<long[]> TestData = DataManager.getTestData(testId); 
             series.setName(testInfo.getComment());
             //populating the series with data

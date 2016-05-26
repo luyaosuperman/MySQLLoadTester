@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 
 import com.MysqlLoadTest.Utilities.ConnectionManager;
 import com.MysqlLoadTest.Utilities.TestInfo;
@@ -30,39 +29,6 @@ public class DataManager {
    	 	return testId;
 	}
 	
-	public static TestInfo getTestInfo(int testId)
-	{
-		Connection connect = ConnectionManager.getConnection("testreport");
-		
-		TestInfo testInfo=null;
-     	PreparedStatement preparedStatement = null;
-		ResultSet rs;
-		try {
-			preparedStatement = connect.prepareStatement("select "
-					+ "id,timestamp,testType,threads,runCount,comment "
-					+ "from testinfo where id = ?;");
-			preparedStatement.setInt(1, testId);
-			rs = preparedStatement.executeQuery();
-			if (rs.next()){
-				assert testId == rs.getInt("id");
-				int testType = rs.getInt("testType");
-				Date testDate = rs.getDate("timestamp");
-				int threads = rs.getInt("threads");
-				int runCount = rs.getInt("runCount");
-				String comment = rs.getString("comment");
-				testInfo = new TestInfo(testType,threads,runCount,comment);
-				testInfo.setTestId(testId);
-				testInfo.setTestDate(testDate);
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		assert testInfo != null;
-		return testInfo; 
-	}
-	
 	public static ArrayList<TestInfo> getAllTestInfo(){
 		Connection connect = ConnectionManager.getConnection("testreport");
 		ArrayList<TestInfo> testInfoList = new ArrayList<TestInfo>();
@@ -76,7 +42,7 @@ public class DataManager {
 			rs = preparedStatement.executeQuery();
 			while (rs.next()){
 				int testId = rs.getInt(1);
-				testInfoList.add(getTestInfo(testId));
+				testInfoList.add(TestInfo.getTestInfo(testId));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

@@ -9,6 +9,10 @@ public class Application {
 
 	private static Logger log = LogManager.getLogger(Application.class); 
 	
+	private static void runnerCall(){
+		
+	}
+	
 	public static int runTest(TestInfo testInfo) throws InterruptedException{
 		//return testId
 		log.debug("log4j.configurationFile: " + System.getProperty("log4j.configurationFile"));
@@ -16,35 +20,10 @@ public class Application {
 		log.info("Start");
 		
 		
-		Prepare prepare = new Prepare();
-		Runner[] instanceArray = new Runner[testInfo.getTotalThreads()];
-		int finishedThreads = 0;
+		Controller controller = new Controller(testInfo);
 		
-		
-		for (int i =0; i<testInfo.getTotalThreads(); i++){
-			instanceArray[i] = new Runner(testInfo,i);
-			instanceArray[i].start();
-		}
-		
-		Reporter reporter = new Reporter(testInfo);
-		reporter.start();
-		
-		while (finishedThreads < testInfo.getTotalThreads())
-		{
-			finishedThreads = 0;
-			for (int i = 0; i<testInfo.getTotalThreads(); i++){
-				if (instanceArray[i].getFinished() == true){finishedThreads ++;}
-			}
-			log.debug("thread finished count/total: " + finishedThreads + "/" + testInfo.getTotalThreads());
-			Thread.sleep(1000);
-		}
-		
-		//for (int i =0; i<10; i++){instanceArray[i].join();}
-		
-		log.info("Finish");
-		reporter.stopReporter();
-		
-		return testInfo.getTestId();
+		return controller.runTest();
+
 	}
 	
 	public static void main(String[] args) throws InterruptedException {
@@ -52,7 +31,22 @@ public class Application {
 		int totalThreads = 10;
 		int runCount = 3000;
 		
-		TestInfo testInfo = new TestInfo(testType,totalThreads,runCount,"test");
+		String tableName = "testLt";
+		String createTableSql = "create table testLt (" +
+								"id bigint unsigned auto_increment primary key, " +
+								"runnerId int unsigned not null, " +
+								"col1 int unsigned not null, " +
+								"col2 bigint unsigned not null, " +
+								"col3 varchar(255) not null, " + 
+								"col4 varchar(255) not null)";
+		int insertPct = 50;
+		int selectPct = 30;
+		int updatePct = 20;
+		int initDataAmount = 100000;
+		
+		
+		TestInfo testInfo = new TestInfo(testType,totalThreads,runCount,"test",
+				tableName,createTableSql,insertPct,selectPct,updatePct,initDataAmount);
 		
 		runTest(testInfo);
 

@@ -8,7 +8,13 @@ create table testInfo
 	testType  int unsigned not null,
 	threads int unsigned not null,
 	runCount  int unsigned not null,
-	comment text 
+	comment text,
+	tableName varchar(255) not null,
+	createTableSql text,
+	insertPct int unsigned not null,
+	selectPct int unsigned not null,
+	updatePct int unsigned not null,
+	initDataAmount bigint unsigned not null
 );
 
 drop table if exists testRuntimeInfo;
