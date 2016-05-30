@@ -8,10 +8,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TestInfo {
+public class TestInfo implements Cloneable{
 
-	private int testType; //1: Insert
-	private int runCount;
+	//private int testType; //1: Insert
+	private int runCount; //total run count, not per thread.
 	private int totalThreads;
 	private String comment;
 	
@@ -43,16 +43,18 @@ public class TestInfo {
 	
 	
 	//private HashMap tableColMap;
-	private Map<String,Tuple<Class,Integer>> tableColMap;//name, class, length
+	public HashMap<String,Tuple<String,Integer>> tableColMap = new HashMap<String,Tuple<String,Integer>>();
+	//name, class, length
 	
 	//need to record down three different charts.
 	
 	//TODO: move getTestInfo here
 
 	
-	public TestInfo(int testType,int totalThreads, int runCount, String comment, 
+	public TestInfo(//int testType,
+			int totalThreads, int runCount, String comment, 
 			String tableName, String createTableSql, int insertPct, int selectPct, int updatePct, int initDataAmount   ){
-		this.setTestType(testType);
+		//this.setTestType(testType);
 		this.setTotalThreads(totalThreads);
 		this.setRunCount(runCount);
 		this.setComment(comment);
@@ -77,14 +79,14 @@ public class TestInfo {
 		ResultSet rs;
 		try {
 			preparedStatement = connect.prepareStatement("select "
-					+ "id,timestamp,testType,threads,runCount,comment, "
+					+ "id,timestamp,threads,runCount,comment, "
 					+ "tableName,createTableSql,insertPct,selectPct,updatePct,initDataAmount "
 					+ "from testinfo where id = ?;");
 			preparedStatement.setInt(1, testId);
 			rs = preparedStatement.executeQuery();
 			if (rs.next()){
 				assert testId == rs.getInt("id");
-				int testType = rs.getInt("testType");
+				//int testType = rs.getInt("testType");
 				Date testDate = rs.getDate("timestamp");
 				int threads = rs.getInt("threads");
 				int runCount = rs.getInt("runCount");
@@ -96,7 +98,7 @@ public class TestInfo {
 				int selectPct = rs.getInt("selectPct");
 				int updatePct = rs.getInt("updatePct");
 				int initDataAmount = rs.getInt("initDataAmount");
-				testInfo = new TestInfo(testType,threads,runCount,comment,
+				testInfo = new TestInfo(threads,runCount,comment,
 						tableName,createTableSql,insertPct,selectPct,updatePct,initDataAmount);
 				testInfo.setTestId(testId);
 				testInfo.setTestDate(testDate);
@@ -109,6 +111,16 @@ public class TestInfo {
 		assert testInfo != null;
 		return testInfo; 
 	}
+	
+    @Override public TestInfo clone() {
+        try {
+            final TestInfo result = (TestInfo) super.clone();
+            // copy fields that need to be copied here!
+            return result;
+        } catch (final CloneNotSupportedException ex) {
+            throw new AssertionError();
+        }
+    }
 
 
 
@@ -116,8 +128,8 @@ public class TestInfo {
 	public void setRunCount(int runCount) {		this.runCount = runCount;	}
 	public int getTotalThreads() {		return totalThreads;	}
 	public void setTotalThreads(int totalThreads) {		this.totalThreads = totalThreads;	}
-	public int getTestType() {		return testType;	}
-	public void setTestType(int testType) {		this.testType = testType;	}
+	//public int getTestType() {		return testType;	}
+	//public void setTestType(int testType) {		this.testType = testType;	}
 	public int getTestId() {		return testId;	}
 	public void setTestId(int testId) {		this.testId = testId;	}
 	public String getComment() {		return comment;	}

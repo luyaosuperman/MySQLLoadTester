@@ -1,4 +1,4 @@
-package com.MysqlLoadTest.Utilities;
+package com.MysqlLoadTest.Utilities; 
 
 import java.sql.Connection;
 import java.sql.DriverManager;

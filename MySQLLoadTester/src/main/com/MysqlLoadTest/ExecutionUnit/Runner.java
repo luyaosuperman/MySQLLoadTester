@@ -24,9 +24,13 @@ public class Runner extends Thread {
 
 	
 	private Connection connect;
-	private int threadID;
+	private final int threadID;
+	private final long runCount;
+	private final int insertPct;
+	private final int updatePct;
+	private final int selectPct;
 	
-	private int runCount;
+	
 	private int runCountCurrent = 0;
 	private int reportInterval = 100;
 	private boolean finished = false;
@@ -44,11 +48,23 @@ public class Runner extends Thread {
 		this.queue=PipeManager.getQueue();
 		this.threadID = threadID;
 		this.testInfo = testInfo;
-		this.runCount = this.testInfo.getRunCount();
+		if(this.testInfo.testStatus == TestInfo.PREPARING){
+			this.runCount = this.testInfo.getInitDataAmount()/this.testInfo.getTotalThreads();
+			this.insertPct = 100;
+			this.updatePct = 0;
+			this.selectPct = 0;
+		}
+		else{
+			this.runCount = this.testInfo.getRunCount()/this.testInfo.getTotalThreads();
+			this.insertPct = this.testInfo.getInsertPct();
+			this.updatePct = this.testInfo.getUpdatePct();
+			this.selectPct = this.testInfo.getSelectPct();
+		}
 
 	}
 	
 	private void reportProgress(){
+		
 		RunnerMessage runnerMessage = new RunnerMessage();
 		if (this.previousReportDateNS != 0){
 			runnerMessage.date = new Date();
@@ -115,6 +131,9 @@ public class Runner extends Thread {
 	}
 	
 	public void run(){
+		todo:
+		Implement select,update,insert
+		Implement random dispatch
 		log.info("Thread " + this.threadID + " started");
 		this.InsertData();
 		log.info("Thread " + this.threadID + " finished");

@@ -5,7 +5,7 @@ create table testInfo
 (
 	id  int unsigned auto_increment primary key,
 	timestamp  datetime not null,
-	testType  int unsigned not null,
+	#testType  int unsigned not null,
 	threads int unsigned not null,
 	runCount  int unsigned not null,
 	comment text,

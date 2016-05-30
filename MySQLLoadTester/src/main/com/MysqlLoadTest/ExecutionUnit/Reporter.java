@@ -35,6 +35,11 @@ public class Reporter extends Thread{
 	
 	private long referenceNanoSecond ;
 	
+	//TODO
+	//Prepare run distinguish: Done
+	insert,select,update report
+	
+	
 	private void preRunSummary(){
 		//Generate the log into database, about configured test information
 		
@@ -65,7 +70,8 @@ public class Reporter extends Thread{
 			
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			//TODO 
+			//Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -81,13 +87,15 @@ public class Reporter extends Thread{
 		this.referenceNanoSecond = System.nanoTime();
 		
 		connect = ConnectionManager.getConnection("testReport");
-		this.preRunSummary();
+		if (this.testInfo.testStatus != TestInfo.PREPARING){
+			this.preRunSummary();
+			}
 		
 	}
 	
 	public void stopReporter(){
 		this.stop = true;
-		this.postRunSummary();
+		if (this.testInfo.testStatus != TestInfo.PREPARING){this.postRunSummary();}
 	}
 	
 	public void pause(int ms){
@@ -118,20 +126,25 @@ public class Reporter extends Thread{
 			log.info("Total " +(currentExecutionCount-this.previousTotalExecution)+ " inserts for past " +(currentTime - this.previousReportTimeNS) / 1000000.0+ "ms " 
 					+ "progress: " + progress*100 + "% " 
 					+ "elapse time: " + currentTime/1000000000 + "seconds");//, estimate "+(currentTime/1000000000/progress -currentTime/1000000000) +" seconds to go.");
-			try {
-				PreparedStatement preparedStatement = 
-						this.connect.prepareStatement( "insert into testRuntimeInfo "
-								+ "(systemNanoTime,testId,totalExecutionCount) values "
-								+ "(?,?,?)");
-				preparedStatement.setLong(1, currentTime);
-				preparedStatement.setInt(2, this.testInfo.getTestId());
-				preparedStatement.setLong(3,currentExecutionCount);
-				
-				preparedStatement.execute();
-				
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			
+			if (this.testInfo.testStatus != TestInfo.PREPARING){
+				try {
+					marker
+					//record three actions separately
+					PreparedStatement preparedStatement = 
+							this.connect.prepareStatement( "insert into testRuntimeInfo "
+									+ "(systemNanoTime,testId,totalExecutionCount) values "
+									+ "(?,?,?)");
+					preparedStatement.setLong(1, currentTime);
+					preparedStatement.setInt(2, this.testInfo.getTestId());
+					preparedStatement.setLong(3,currentExecutionCount);
+					
+					preparedStatement.execute();
+					
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			
 			

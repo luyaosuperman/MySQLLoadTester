@@ -22,12 +22,15 @@ public class Application {
 		
 		Controller controller = new Controller(testInfo);
 		
+		log.info("prepareData()");
+		controller.prepareData();
+		log.info("runTest()");
 		return controller.runTest();
 
 	}
 	
 	public static void main(String[] args) throws InterruptedException {
-		int testType = 1;
+		//int testType = 1;
 		int totalThreads = 10;
 		int runCount = 3000;
 		
@@ -45,7 +48,7 @@ public class Application {
 		int initDataAmount = 100000;
 		
 		
-		TestInfo testInfo = new TestInfo(testType,totalThreads,runCount,"test",
+		TestInfo testInfo = new TestInfo(totalThreads,runCount,"test",
 				tableName,createTableSql,insertPct,selectPct,updatePct,initDataAmount);
 		
 		runTest(testInfo);

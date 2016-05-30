@@ -1,4 +1,4 @@
-package com.MysqlLoadTest.GUI;
+package com.MysqlLoadTest.GUI; 
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

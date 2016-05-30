@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.MysqlLoadTest.Utilities.ConnectionManager;
 import com.MysqlLoadTest.Utilities.TestInfo;
+import com.MysqlLoadTest.Utilities.Tuple;
 
 public class Controller {
 
@@ -22,6 +23,7 @@ public class Controller {
 	//private int threadID;
 	
 	private TestInfo testInfo;
+	//private TestInfo testInfoPrepare;
 	
 	public Controller(TestInfo testInfo){
 		this.testInfo = testInfo;
@@ -33,7 +35,7 @@ public class Controller {
 	}
 	
 	
-	boolean DropCreateTable(){
+	private void DropCreateTable(){
 		try {
 			Statement statement = this.connect.createStatement();
 			statement.execute("drop table if exists " + this.testInfo.getTableName());
@@ -46,15 +48,39 @@ public class Controller {
 			System.exit(1);
 			//return false;
 		}
-		return true;
 	}
 	
 	private void parseTestTable(){
-		mark todo
+		try {
+			PreparedStatement preparedStatement = this.connect.prepareStatement("select " 
++"ordinal_position,column_name,data_type,character_maximum_length "
++"from information_schema.`COLUMNS` col "
++"where col.TABLE_SCHEMA = 'test' " 
++"and col.TABLE_NAME = ? "
++"and col.ORDINAL_POSITION > 2; ");
+			preparedStatement.setString(1, this.testInfo.getTableName());
+			
+			ResultSet rs = preparedStatement.executeQuery();
+			while (rs.next()){
+				String column_name = rs.getString("column_name");
+				String data_type = rs.getString("data_type");
+				int character_maximum_length = rs.getInt("character_maximum_length");
+				
+				this.testInfo.tableColMap.put(column_name, 
+						new Tuple<String,Integer>(data_type,character_maximum_length));
+			}
+			
+			log.info("table parsed");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.exit(1);
+			//return false;
+		}
 		
 	}
 	
-	private void prepareData(){
+	public void prepareData(){
 		assert this.testInfo.testStatus == TestInfo.PREPARING;
 		this.runTest();
 		this.testInfo.testStatus = TestInfo.RUNNING;
@@ -64,7 +90,6 @@ public class Controller {
 		Runner[] instanceArray = new Runner[testInfo.getTotalThreads()];
 		int finishedThreads = 0;
 		
-		
 		for (int i =0; i<testInfo.getTotalThreads(); i++){
 			instanceArray[i] = new Runner(testInfo,i);
 			instanceArray[i].start();
@@ -73,7 +98,6 @@ public class Controller {
 		Reporter reporter = new Reporter(testInfo);
 		reporter.start();
 
-		
 		while (finishedThreads < testInfo.getTotalThreads())
 		{
 			finishedThreads = 0;
@@ -82,7 +106,7 @@ public class Controller {
 			}
 			log.debug("thread finished count/total: " + finishedThreads + "/" + testInfo.getTotalThreads());
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
