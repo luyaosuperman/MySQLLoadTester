@@ -87,6 +87,7 @@ public class Controller {
 	}
 	
 	public int runTest(){
+		
 		Runner[] instanceArray = new Runner[testInfo.getTotalThreads()];
 		int finishedThreads = 0;
 		
@@ -95,7 +96,10 @@ public class Controller {
 			instanceArray[i].start();
 		}
 		
-		Reporter reporter = new Reporter(testInfo);
+		MaxIdCatcher maxIdCatcher = new MaxIdCatcher(this.testInfo);
+		maxIdCatcher.start();
+		
+		Reporter reporter = new Reporter(this.testInfo);
 		reporter.start();
 
 		while (finishedThreads < testInfo.getTotalThreads())
@@ -106,7 +110,7 @@ public class Controller {
 			}
 			log.debug("thread finished count/total: " + finishedThreads + "/" + testInfo.getTotalThreads());
 			try {
-				Thread.sleep(5000);
+				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -115,6 +119,7 @@ public class Controller {
 		
 		log.info("Finish");
 		reporter.stopReporter();
+		maxIdCatcher.stopMaxIdCatcher();;
 		
 		return testInfo.getTestId();
 	}

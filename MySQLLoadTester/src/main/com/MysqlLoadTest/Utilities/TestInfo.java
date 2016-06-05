@@ -6,12 +6,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class TestInfo implements Cloneable{
 
 	//private int testType; //1: Insert
-	private int runCount; //total run count, not per thread.
+	private long runCount; //total run count, not per thread.
+	private long rowCount;
 	private int totalThreads;
 	private String comment;
 	
@@ -41,9 +43,11 @@ public class TestInfo implements Cloneable{
 	
 	public int testStatus = PREPARING;
 	
+	private int maxId = 0;
+	
 	
 	//private HashMap tableColMap;
-	public HashMap<String,Tuple<String,Integer>> tableColMap = new HashMap<String,Tuple<String,Integer>>();
+	public LinkedHashMap<String,Tuple<String,Integer>> tableColMap = new LinkedHashMap<String,Tuple<String,Integer>>();
 	//name, class, length
 	
 	//need to record down three different charts.
@@ -52,11 +56,12 @@ public class TestInfo implements Cloneable{
 
 	
 	public TestInfo(//int testType,
-			int totalThreads, int runCount, String comment, 
+			int totalThreads, long runCount, long rowCount, String comment, 
 			String tableName, String createTableSql, int insertPct, int selectPct, int updatePct, int initDataAmount   ){
 		//this.setTestType(testType);
 		this.setTotalThreads(totalThreads);
 		this.setRunCount(runCount);
+		this.setRowCount(rowCount);
 		this.setComment(comment);
 		
 		this.setTableName(tableName);
@@ -66,6 +71,7 @@ public class TestInfo implements Cloneable{
 		this.setUpdatePct(updatePct);
 		this.setInitDataAmount(initDataAmount);
 		
+		assert insertPct + selectPct + updatePct == 100;
 		
 	}
 	
@@ -79,7 +85,7 @@ public class TestInfo implements Cloneable{
 		ResultSet rs;
 		try {
 			preparedStatement = connect.prepareStatement("select "
-					+ "id,timestamp,threads,runCount,comment, "
+					+ "id,timestamp,threads,runCount,rowCount,comment, "
 					+ "tableName,createTableSql,insertPct,selectPct,updatePct,initDataAmount "
 					+ "from testinfo where id = ?;");
 			preparedStatement.setInt(1, testId);
@@ -89,7 +95,8 @@ public class TestInfo implements Cloneable{
 				//int testType = rs.getInt("testType");
 				Date testDate = rs.getDate("timestamp");
 				int threads = rs.getInt("threads");
-				int runCount = rs.getInt("runCount");
+				long runCount = rs.getLong("runCount");
+				long rowCount = rs.getLong("rowCount");
 				String comment = rs.getString("comment");
 				
 				String tableName = rs.getString("tableName");
@@ -98,7 +105,7 @@ public class TestInfo implements Cloneable{
 				int selectPct = rs.getInt("selectPct");
 				int updatePct = rs.getInt("updatePct");
 				int initDataAmount = rs.getInt("initDataAmount");
-				testInfo = new TestInfo(threads,runCount,comment,
+				testInfo = new TestInfo(threads,runCount,rowCount,comment,
 						tableName,createTableSql,insertPct,selectPct,updatePct,initDataAmount);
 				testInfo.setTestId(testId);
 				testInfo.setTestDate(testDate);
@@ -124,8 +131,8 @@ public class TestInfo implements Cloneable{
 
 
 
-	public int getRunCount() {		return runCount;	}
-	public void setRunCount(int runCount) {		this.runCount = runCount;	}
+	public long getRunCount() {		return runCount;	}
+	public void setRunCount(long runCount) {		this.runCount = runCount;	}
 	public int getTotalThreads() {		return totalThreads;	}
 	public void setTotalThreads(int totalThreads) {		this.totalThreads = totalThreads;	}
 	//public int getTestType() {		return testType;	}
@@ -148,4 +155,8 @@ public class TestInfo implements Cloneable{
 	public void setUpdatePct(int updatePct) {		this.updatePct = updatePct;	}
 	public long getInitDataAmount() {		return initDataAmount;	}
 	public void setInitDataAmount(long initDataAmount) {		this.initDataAmount = initDataAmount;	}
+	public int getMaxId() {return maxId;}
+	public void setMaxId(int maxId) {this.maxId = maxId;}
+	public long getRowCount() {return rowCount;}
+	public void setRowCount(long rowCount) {this.rowCount = rowCount;}
 }

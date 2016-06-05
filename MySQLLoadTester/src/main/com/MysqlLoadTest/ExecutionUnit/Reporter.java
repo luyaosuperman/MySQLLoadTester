@@ -23,9 +23,15 @@ public class Reporter extends Thread{
 	private long previousReportTimeNS = 0;
 	private long reportIntervalNS = 1000000000;//nanoseconds
 	
-	private long totalExecution = 0;
-	//private long intervalExecution = 0;
-	private long previousTotalExecution = 0;
+	private long runCount = 0;
+	private long insertCount;
+	private long updateCount;
+	private long selectCount;
+	
+	private long previousRunCount = 0;
+	private long previousIntervalInsertCount;
+	private long previousIntervalUpdateCount;
+	private long previousIntervalSelectCount;
 	
 	//private ObjectInputStream inputPipe;
 	private ConcurrentLinkedDeque<RunnerMessage> queue;
@@ -37,7 +43,7 @@ public class Reporter extends Thread{
 	
 	//TODO
 	//Prepare run distinguish: Done
-	insert,select,update report
+	//insert,select,update report
 	
 	
 	private void preRunSummary(){
@@ -47,16 +53,27 @@ public class Reporter extends Thread{
 			PreparedStatement preparedStatement = 
 					this.connect.prepareStatement(
 					"insert into testInfo "
-					+ "(timestamp,testType,threads,runCount,comment) values (now(),?,?,?,?)",
+					+ "(timestamp,threads,runCount,rowCount,comment,"
+					+ "tableName, createTableSql,"
+					+ "insertPct, selectPct, updatePct,"
+					+ "initDataAmount) values "
+					+ "(now(),?,?,?,?,?,?,?,?,?,?)",
 					//TODO
-					marker
+					//marker
 					Statement.RETURN_GENERATED_KEYS);
 			
 			//preparedStatement.setTimestamp(1, new java.sql.Timestamp(System.currentTimeMillis()));
-			preparedStatement.setInt(1, testInfo.getTestType());
-			preparedStatement.setInt(2, testInfo.getTotalThreads());
-			preparedStatement.setInt(3, testInfo.getRunCount());
+			preparedStatement.setInt(1, testInfo.getTotalThreads());
+			preparedStatement.setLong(2, testInfo.getRunCount());
+			preparedStatement.setLong(3, testInfo.getRowCount());
 			preparedStatement.setString(4, testInfo.getComment());
+			preparedStatement.setString(5, testInfo.getTableName());
+			preparedStatement.setString(6, testInfo.getCreateTableSQL());
+			preparedStatement.setInt(7, testInfo.getInsertPct());
+			preparedStatement.setInt(8, testInfo.getSelectPct());
+			preparedStatement.setInt(9, testInfo.getUpdatePct());
+			preparedStatement.setFloat(10, testInfo.getInitDataAmount());
+			
 			
 			preparedStatement.executeUpdate();
 			
@@ -108,36 +125,54 @@ public class Reporter extends Thread{
 	}
 	
 	private void summaryReport(){
-		//This is to give a detailed summary about TPS info
 		
 		long currentTime = System.nanoTime() - this.referenceNanoSecond;
-		long currentExecutionCount = this.totalExecution;
-		
-		//log.info("this.referenceNanoSecond "  + this.referenceNanoSecond);
-		//log.info("this.previousReportTimeNS " + this.previousReportTimeNS);
-		//log.info("currentTime " + currentTime);
+		long currentRunCount = this.runCount;
+		long currentInsertCount = this.insertCount;
+		long currentUpdateCount = this.updateCount;
+		long currentSelectCount = this.selectCount;
 		
 		if ( this.previousReportTimeNS != 0 && currentTime - this.previousReportTimeNS >= this.reportIntervalNS){
 			
-			double progress = 1.0*this.totalExecution/(this.testInfo.getRunCount()*this.testInfo.getTotalThreads());
+			double progress;
 			
-			log.debug("currentExecutionCount " + currentExecutionCount + "this.previousTotalExecution" +this.previousTotalExecution
-					+ " currentTime " +currentTime  + " this.previousReportTimeNS " + this.previousReportTimeNS);
-			log.info("Total " +(currentExecutionCount-this.previousTotalExecution)+ " inserts for past " +(currentTime - this.previousReportTimeNS) / 1000000.0+ "ms " 
-					+ "progress: " + progress*100 + "% " 
-					+ "elapse time: " + currentTime/1000000000 + "seconds");//, estimate "+(currentTime/1000000000/progress -currentTime/1000000000) +" seconds to go.");
+			if (this.testInfo.testStatus != TestInfo.PREPARING){
+				if (this.testInfo.getInsertPct()>0){
+					progress = 1.0*(this.insertCount)/(this.testInfo.getRowCount() - this.testInfo.getInitDataAmount());
+				}else{
+					progress = 1.0*this.runCount/(this.testInfo.getRunCount());
+				}
+			}else{
+				progress = 1.0*this.runCount/(this.testInfo.getInitDataAmount());
+			}
+			
+			String info = currentTime/1000000000 + "Sec "+
+					"ROW:" + this.testInfo.getMaxId() + " " +
+					"T:" + Long.toString(currentRunCount-this.previousRunCount) + '/' +
+					"I:" + Long.toString(currentInsertCount-this.previousIntervalInsertCount) + " " +
+					"U:" + Long.toString(currentUpdateCount-this.previousIntervalUpdateCount) + " " +
+					"S:" + Long.toString(currentSelectCount-this.previousIntervalSelectCount) + " " +
+					"Pct: " + progress*100 + "%";
+			if (this.testInfo.testStatus == TestInfo.PREPARING){
+				info = "*prepare " + info;
+			}
+			log.info(info);
 			
 			if (this.testInfo.testStatus != TestInfo.PREPARING){
 				try {
-					marker
-					//record three actions separately
 					PreparedStatement preparedStatement = 
 							this.connect.prepareStatement( "insert into testRuntimeInfo "
-									+ "(systemNanoTime,testId,totalExecutionCount) values "
-									+ "(?,?,?)");
+									+ "(systemNanoTime,testId,"
+									+ "runCountCurrent,intervalInsertCount,intervalUpdateCount,intervalSelectCount"
+									+ ") values "
+									+ "(?,?,"
+									+ "?,?,?,?)");
 					preparedStatement.setLong(1, currentTime);
 					preparedStatement.setInt(2, this.testInfo.getTestId());
-					preparedStatement.setLong(3,currentExecutionCount);
+					preparedStatement.setLong(3,currentRunCount);
+					preparedStatement.setLong(4,currentInsertCount);
+					preparedStatement.setLong(5,currentUpdateCount);
+					preparedStatement.setLong(6,currentSelectCount);
 					
 					preparedStatement.execute();
 					
@@ -147,28 +182,31 @@ public class Reporter extends Thread{
 				}
 			}
 			
-			
-			
 			this.previousReportTimeNS = currentTime;
-			this.previousTotalExecution = currentExecutionCount;
+			this.previousRunCount = currentRunCount;
+			this.previousIntervalInsertCount = currentInsertCount;
+			this.previousIntervalUpdateCount = currentUpdateCount;
+			this.previousIntervalSelectCount = currentSelectCount;
 		}	
 
 	}
 	
 	public void run(){
-		//this.inputPipe = PipeManager.getInputPipe();
 		this.queue = PipeManager.getQueue();
 		
 		
 		while (!stop){
 			if (!this.queue.isEmpty()){
 				RunnerMessage runnerMessage=this.queue.poll();
-				this.totalExecution += runnerMessage.intervalInsertCount;
+				this.runCount += runnerMessage.intervalRunCount;
+				this.insertCount += runnerMessage.intervalInsertCount;
+				this.updateCount += runnerMessage.intervalUpdateCount;
+				this.selectCount += runnerMessage.intervalSelectCount;
 				log.debug(runnerMessage.toString());
 				if (this.previousReportTimeNS == 0){ this.previousReportTimeNS = System.nanoTime() - this.referenceNanoSecond;}
 			}
 			else{
-				this.pause(10);
+				this.pause(100);
 			}
 
 			this.summaryReport();

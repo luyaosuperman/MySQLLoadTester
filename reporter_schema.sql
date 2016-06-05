@@ -7,7 +7,8 @@ create table testInfo
 	timestamp  datetime not null,
 	#testType  int unsigned not null,
 	threads int unsigned not null,
-	runCount  int unsigned not null,
+	runCount  bigint unsigned not null,
+	rowCount bigint unsigned not null,
 	comment text,
 	tableName varchar(255) not null,
 	createTableSql text,
@@ -24,6 +25,9 @@ create table testRuntimeInfo
 	id  int unsigned auto_increment primary key,
 	systemNanoTime  bigint unsigned not null,
 	testId  int unsigned not null,
-	totalExecutionCount  bigint unsigned not null#,
+	runCountCurrent  bigint unsigned not null,
+	intervalInsertCount  bigint unsigned not null,
+	intervalUpdateCount  bigint unsigned not null,
+	intervalSelectCount  bigint unsigned not null
 	#intervalExecution  int unsigned not null
 );

@@ -1,7 +1,7 @@
 package com.MysqlLoadTest.ExecutionUnit;
 
 import java.util.Random;
-
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -28,27 +28,34 @@ public class Runner extends Thread {
 	private Connection connect;
 	private final int threadID;
 	private final long runCount;
+	private final long rowCount;
 	private final int insertPct;
 	private final int updatePct;
 	private final int selectPct;
 	
-	private int insertCount;
-	private int updateCount;
-	private int selectCount;
+	private int totalInsertCount;
+	private int totalUpdateCount;
+	private int totalSelectCount;
+	private int totalRunCount;
 	
-	private String sqlInsertTemplate;
-	private String sqlupdateTemplate;
-	private String sqlselectTemplate;
+	private int intervalInsertCount;
+	private int intervalUpdateCount;
+	private int intervalSelectCount;
+	private int intervalRunCount;
 	
-	private PreparedStatement insertStatement;
-	private PreparedStatement updateStatement;
-	private PreparedStatement selectStatement;
+	private  String sqlInsertTemplate;
+	private  String sqlupdateTemplate;
+	private  String sqlselectTemplate;
+	
+	private  PreparedStatement insertStatement;
+	private  PreparedStatement updateStatement;
+	private  PreparedStatement selectStatement;
 	
 	private final int arraySize;
 	
 	
-	private int runCountCurrent = 0;
-	private int reportInterval = 100;
+	
+	private final int reportInterval = 100;
 	private boolean finished = false;
 	private long previousReportDateNS = 0;
 	
@@ -57,7 +64,9 @@ public class Runner extends Thread {
 	//private ObjectOutputStream outputPipe;
 	private ConcurrentLinkedDeque<RunnerMessage> queue;
 	
-	private TestInfo testInfo;
+	private final TestInfo testInfo;
+	
+	private String[] dataSet;
 	
 	private String removeTrailing(String c){
 		return c.substring(0, c.length()-1);
@@ -70,17 +79,20 @@ public class Runner extends Thread {
 		this.threadID = threadID;
 		this.testInfo = testInfo;
 		if(this.testInfo.testStatus == TestInfo.PREPARING){
-			this.runCount = this.testInfo.getInitDataAmount()/this.testInfo.getTotalThreads();
+			this.rowCount = this.testInfo.getInitDataAmount();
 			this.insertPct = 100;
 			this.updatePct = 0;
 			this.selectPct = 0;
 		}
 		else{
-			this.runCount = this.testInfo.getRunCount()/this.testInfo.getTotalThreads();
+			
+			this.rowCount = this.testInfo.getRowCount();
 			this.insertPct = this.testInfo.getInsertPct();
 			this.updatePct = this.testInfo.getUpdatePct();
 			this.selectPct = this.testInfo.getSelectPct();
 		}
+		this.runCount = this.testInfo.getRunCount()/this.testInfo.getTotalThreads();
+		
 		
 		//prepare statement template
 		
@@ -93,17 +105,19 @@ public class Runner extends Thread {
 		parameterTemplate = this.removeTrailing(parameterTemplate);
 		ValueTemplate = this.removeTrailing(ValueTemplate);
 		
-		this.sqlInsertTemplate = String.format("insert into %s (runnderid,%s) values (?,%s)",
+		this.sqlInsertTemplate = String.format("insert into %s (runnerId,%s) values (?,%s)",
 										this.testInfo.getTableName(),parameterTemplate,ValueTemplate);
+		//this.sqlInsertTemplate = String.format("insert into %s (runnderid,%s) values (?)",
+		//		this.testInfo.getTableName(),parameterTemplate);
 		
 		
-		this.sqlupdateTemplate = "update %s set runnerid = ?, ";
+		this.sqlupdateTemplate = String.format("update %s set runnerid = ?, ", this.testInfo.getTableName());
 		
 		for (String colName : this.testInfo.tableColMap.keySet()){
 			this.sqlupdateTemplate += String.format(" %s = ?,",colName);
 		}
 		this.sqlupdateTemplate = this.removeTrailing(sqlupdateTemplate);
-		this.sqlupdateTemplate += String.format(" from %s where id = ?;",this.testInfo.getTableName());
+		this.sqlupdateTemplate += " where id = ?;";
 		
 		this.sqlselectTemplate = String.format("select * from %s where id = ?; ",this.testInfo.getTableName());
 
@@ -118,6 +132,8 @@ public class Runner extends Thread {
 			e.printStackTrace();
 		}
 		
+		this.dataGenerator();
+		
 	}
 	
 	private void reportProgress(){
@@ -126,42 +142,37 @@ public class Runner extends Thread {
 		if (this.previousReportDateNS != 0){
 			runnerMessage.date = new Date();
 			runnerMessage.threadID = this.threadID;
-			runnerMessage.totalInsertCount = this.runCountCurrent;
-			runnerMessage.intervalInsertCount = this.reportInterval;
+			runnerMessage.intervalRunCount = this.intervalRunCount;
+			runnerMessage.intervalInsertCount = this.intervalInsertCount;
+			runnerMessage.intervalUpdateCount = this.intervalUpdateCount;
+			runnerMessage.intervalSelectCount = this.intervalSelectCount;
+
 			runnerMessage.reportInterval = System.nanoTime() - this.previousReportDateNS;
 			
 			this.queue.push(runnerMessage);
 			log.debug("Progress reported from thread: " + this.threadID);
 		}
 		
+		this.intervalRunCount=0;
+		this.intervalInsertCount=0;
+		this.intervalUpdateCount=0;
+		this.intervalSelectCount=0;
+		
 		this.previousReportDateNS = System.nanoTime();
 	}
 	
 	
-	private Object[] dataGenerator(){
-		Object[] result = new Object[this.arraySize];
-		int  colIndent = 0;
-		for (String colName: this.testInfo.tableColMap.keySet()){
-			Tuple<String, Integer> colInfo = this.testInfo.tableColMap.get(colName);
-			
-			switch (colInfo.x){
-			case "int":
-				result[colIndent] = 1;
-				break;
-			case "bigint":
-				result[colIndent] = 1;
-				break;
-			case "char":
-				result[colIndent] = "abc";
-				break;
-			}
-			
-			
-			
+	private void dataGenerator(){
+		this.dataSet = new String[this.arraySize+1];
+		this.dataSet[0] = Integer.toString(this.threadID);
+		int colIndent = 1;
+		int value = this.rand.nextInt(10000)+1;
+		for (int i=0;i<this.arraySize; i++){
+			//Tuple<String, Integer> colInfo = this.testInfo.tableColMap.get(colName);
+			this.dataSet[colIndent] = Integer.toString(value);			
 			colIndent +=1;
 		}
 		
-		return result;
 	}
 	
 	private void insertData(){
@@ -170,25 +181,76 @@ public class Runner extends Thread {
 			
 			this.insertStatement.clearParameters();
 			
+			int indent = 1;
+			for (String item: this.dataSet){
+				//log.info("indent: " + indent + " item: " + item);
+				this.insertStatement.setString(indent, item);
+				indent += 1;
+			}
+			this.insertStatement.execute();
+			
+			
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		this.insertCount++;
+		this.totalInsertCount++;
+		this.intervalInsertCount++;
+	}
+	
+	private int getRandomId(){
+		return this.rand.nextInt(this.testInfo.getMaxId())+1;
+		
 	}
 	
 	private void selectData(){
 		
-		//how to get max(id) without lock?
+		try {
+			this.selectStatement.clearParameters();
+			this.selectStatement.setInt(1, this.getRandomId());
+			this.selectStatement.executeQuery();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		this.selectCount++;
+		
+		this.totalSelectCount++;
+		this.intervalSelectCount++;
 	}
 	
 	private void updateData(){
 		
-		this.updateCount++;
+		this.dataGenerator();
+		try {
+			this.updateStatement.clearParameters();
+			
+			int indent = 1;
+			for(String item : this.dataSet){
+				this.updateStatement.setString(indent, item);
+				indent ++;
+			}
+			this.updateStatement.setInt(indent,getRandomId());
+			this.updateStatement.executeUpdate();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		this.totalUpdateCount++;
+		this.intervalUpdateCount++;
+	}
+	
+	public boolean continueToRun(){
+		if (this.insertPct > 0){//with insert
+			return this.testInfo.getMaxId() < this.rowCount;
+		}else{//with no insert
+			return this.runCount < this.totalRunCount;
+		}
 	}
 	
 	public void run(){
@@ -198,10 +260,10 @@ public class Runner extends Thread {
 		log.info("Thread " + this.threadID + " started");
 
 		long startTime = System.nanoTime();
-		while (this.runCount > this.runCountCurrent){
+		while (true){
 			for (int i=0; i< reportInterval; i++){
 				
-				int randomNum = this.rand.nextInt(100) +1;//1~100
+				int randomNum = this.rand.nextInt(100)+1;//1~100
 				//insert:0-insert
 				if (randomNum <=this.insertPct){
 					//insert
@@ -213,14 +275,17 @@ public class Runner extends Thread {
 					//select
 					this.selectData();
 				}
+				this.totalRunCount++;
+				this.intervalRunCount++;
 			}
 			this.reportProgress();
+			if (!this.continueToRun()){break;}
 		}
 		long endTime = System.nanoTime();
 		long duration_ns = (endTime - startTime); 
 		
 		log.info("Thread " + this.threadID + " finished");
-		log.info("Elapse time in milli second: " + duration_ns / 1000000);
+		//log.info("Elapse time in milli second: " + duration_ns / 1000000);
 		this.setFinished(true);
 	}
 
