@@ -9,31 +9,13 @@ public class Application {
 
 	private static Logger log = LogManager.getLogger(Application.class); 
 	
-	private static void runnerCall(){
-		
-	}
-	
-	public static int runTest(TestInfo testInfo) throws InterruptedException{
-		//return testId
-		log.debug("log4j.configurationFile: " + System.getProperty("log4j.configurationFile"));
-		log.debug("java.class.path: " + System.getProperty("java.class.path"));
-		log.info("Start");
-		
-		
-		Controller controller = new Controller(testInfo);
-		
-		log.info("prepareData()");
-		controller.prepareData();
-		log.info("runTest()");
-		return controller.runTest();
 
-	}
 	
 	public static void main(String[] args) {
 		//int testType = 1;
 		int totalThreads = 20;
 		int runCount = 3000000;
-		int rowCount = 300000;
+		int rowCount = 30000;
 		
 		String tableName = "testLt";
 		String createTableSql = "create table testLt (" +
@@ -63,18 +45,50 @@ public class Application {
 		int updatePct = 60;
 		
 		
-		int initDataAmount = 100000;
+		int initDataAmount = 10000;
 		
 		
 		TestInfo testInfo = new TestInfo(totalThreads,runCount,rowCount,"test",
 				tableName,createTableSql,insertPct,selectPct,updatePct,initDataAmount);
 		
-		try {
-			runTest(testInfo);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		Controller controller = new Controller();
+		controller.start();
+		
+		controller.startTest(testInfo);
+		while (controller.testStatus() != Controller.NOTRUNNING){
+			log.info("Waiting: " +
+					"testId: " + testInfo.getTestId() +
+					" status: " + testInfo.testStatus +
+					" progress: " + testInfo.getTestProgress()
+					);
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+		
+		log.info("test seems to be finished");
+		
+		log.info("Do it again");
+		
+		controller.startTest(testInfo);
+		while (controller.testStatus() != Controller.NOTRUNNING){
+			log.info("Waiting: " +
+					"testId: " + testInfo.getTestId() +
+					" status: " + testInfo.testStatus +
+					" progress: " + testInfo.getTestProgress()
+					);
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		log.info("test seems to be finished");
 
 	}
 }

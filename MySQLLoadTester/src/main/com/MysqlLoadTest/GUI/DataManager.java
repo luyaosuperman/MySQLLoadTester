@@ -20,12 +20,13 @@ public class DataManager {
 	
 	public static int runTest(TestInfo testInfo){
 		int testId = 0;
+   	 	/*
    	 	try {
-			 testId = com.MysqlLoadTest.ExecutionUnit.Application.runTest(testInfo);
+			 testId = com.MysqlLoadTest.ExecutionUnit.Controller.runTest(testInfo);
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		}
+		}*/
    	 	return testId;
 	}
 	

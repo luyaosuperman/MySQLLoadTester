@@ -257,7 +257,7 @@ public class Runner extends Thread {
 		/*todo:
 		Implement select,update,insert
 		Implement random dispatch*/
-		log.info("Thread " + this.threadID + " started");
+		//log.info("Thread " + this.threadID + " started");
 
 		long startTime = System.nanoTime();
 		while (true){
@@ -284,7 +284,7 @@ public class Runner extends Thread {
 		long endTime = System.nanoTime();
 		long duration_ns = (endTime - startTime); 
 		
-		log.info("Thread " + this.threadID + " finished");
+		//log.info("Thread " + this.threadID + " finished");
 		//log.info("Elapse time in milli second: " + duration_ns / 1000000);
 		this.setFinished(true);
 	}

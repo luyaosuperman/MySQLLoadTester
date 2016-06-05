@@ -146,6 +146,8 @@ public class Reporter extends Thread{
 				progress = 1.0*this.runCount/(this.testInfo.getInitDataAmount());
 			}
 			
+			this.testInfo.setTestProgress(progress);
+			
 			String info = currentTime/1000000000 + "Sec "+
 					"ROW:" + this.testInfo.getMaxId() + " " +
 					"T:" + Long.toString(currentRunCount-this.previousRunCount) + '/' +
@@ -163,7 +165,7 @@ public class Reporter extends Thread{
 					PreparedStatement preparedStatement = 
 							this.connect.prepareStatement( "insert into testRuntimeInfo "
 									+ "(systemNanoTime,testId,"
-									+ "runCountCurrent,intervalInsertCount,intervalUpdateCount,intervalSelectCount"
+									+ "runCount,insertCount,updateCount,selectCount"
 									+ ") values "
 									+ "(?,?,"
 									+ "?,?,?,?)");

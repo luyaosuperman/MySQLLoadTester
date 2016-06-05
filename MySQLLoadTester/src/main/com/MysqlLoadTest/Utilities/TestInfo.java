@@ -1,5 +1,6 @@
 package com.MysqlLoadTest.Utilities;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,7 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class TestInfo implements Cloneable{
+public class TestInfo implements Serializable{
 
 	//private int testType; //1: Insert
 	private long runCount; //total run count, not per thread.
@@ -42,6 +43,7 @@ public class TestInfo implements Cloneable{
 	public static final int RUNNING = 1;
 	
 	public int testStatus = PREPARING;
+	private double testProgress = 0;
 	
 	private int maxId = 0;
 	
@@ -159,4 +161,14 @@ public class TestInfo implements Cloneable{
 	public void setMaxId(int maxId) {this.maxId = maxId;}
 	public long getRowCount() {return rowCount;}
 	public void setRowCount(long rowCount) {this.rowCount = rowCount;}
+
+
+	public double getTestProgress() {
+		return testProgress;
+	}
+
+
+	public void setTestProgress(double testProgress) {
+		this.testProgress = testProgress;
+	}
 }

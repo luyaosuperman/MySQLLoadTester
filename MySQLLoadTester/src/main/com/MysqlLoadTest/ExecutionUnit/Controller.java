@@ -14,7 +14,7 @@ import com.MysqlLoadTest.Utilities.ConnectionManager;
 import com.MysqlLoadTest.Utilities.TestInfo;
 import com.MysqlLoadTest.Utilities.Tuple;
 
-public class Controller {
+public class Controller extends Thread{
 
 	private static Logger log = LogManager.getLogger(Controller.class); 
 
@@ -25,13 +25,54 @@ public class Controller {
 	private TestInfo testInfo;
 	//private TestInfo testInfoPrepare;
 	
-	public Controller(TestInfo testInfo){
-		this.testInfo = testInfo;
-		this.connect = ConnectionManager.getConnection();
-		//this.threadID = threadID;
-		this.DropCreateTable();
-		this.parseTestTable();
+	private int controllerStatus = this.NOTRUNNING;
+	
+	public static final int NOTRUNNING=0;
+	public static final int RUNNING=1;
+	
+	public Controller(){
+	}
+	
+	public void startTest(TestInfo testInfo){
+		//start test if none is running
+		//otherwise throw an error
+		if (this.controllerStatus!= Controller.NOTRUNNING){
+			throw new IllegalStateException();
+		}else{
+			this.controllerStatus = Controller.RUNNING;
+			this.testInfo = testInfo;
+		}
+	}
+	
+	public int testStatus(){
+		return this.controllerStatus;
+	}
+	
+	public void run(){
 		
+		while (true){
+			
+			if (this.controllerStatus == Controller.RUNNING){
+				this.connect = ConnectionManager.getConnection();
+				this.DropCreateTable();
+				this.parseTestTable();
+				
+				log.info("prepareData()");
+				this.prepareData();
+				log.info("runTest()");
+				this.runTest();
+				
+				this.controllerStatus = Controller.NOTRUNNING;
+			}else{
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		}
 	}
 	
 	
@@ -86,7 +127,7 @@ public class Controller {
 		this.testInfo.testStatus = TestInfo.RUNNING;
 	}
 	
-	public int runTest(){
+	private int runTest(){
 		
 		Runner[] instanceArray = new Runner[testInfo.getTotalThreads()];
 		int finishedThreads = 0;

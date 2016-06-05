@@ -25,9 +25,9 @@ create table testRuntimeInfo
 	id  int unsigned auto_increment primary key,
 	systemNanoTime  bigint unsigned not null,
 	testId  int unsigned not null,
-	runCountCurrent  bigint unsigned not null,
-	intervalInsertCount  bigint unsigned not null,
-	intervalUpdateCount  bigint unsigned not null,
-	intervalSelectCount  bigint unsigned not null
+	runCount  bigint unsigned not null,
+	insertCount  bigint unsigned not null,
+	updateCount  bigint unsigned not null,
+	selectCount  bigint unsigned not null
 	#intervalExecution  int unsigned not null
 );
