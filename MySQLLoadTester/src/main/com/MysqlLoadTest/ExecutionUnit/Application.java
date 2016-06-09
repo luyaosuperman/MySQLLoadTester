@@ -15,7 +15,7 @@ public class Application {
 		//int testType = 1;
 		int totalThreads = 20;
 		int runCount = 3000000;
-		int rowCount = 30000;
+		int rowCount = 3000000;
 		
 		String tableName = "testLt";
 		String createTableSql = "create table testLt (" +
@@ -45,7 +45,7 @@ public class Application {
 		int updatePct = 60;
 		
 		
-		int initDataAmount = 10000;
+		int initDataAmount = 1000000;
 		
 		
 		TestInfo testInfo = new TestInfo(totalThreads,runCount,rowCount,"test",

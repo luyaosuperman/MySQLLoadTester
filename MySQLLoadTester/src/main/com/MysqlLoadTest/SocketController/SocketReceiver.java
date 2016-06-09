@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import com.MysqlLoadTest.ExecutionUnit.Controller;
 import com.MysqlLoadTest.ExecutionUnit.Runner;
 import com.MysqlLoadTest.Utilities.TestInfo;
+import com.MysqlLoadTest.Utilities.TestInfoClient;
 
 public class SocketReceiver {
 	
@@ -55,10 +56,29 @@ public class SocketReceiver {
 
                 ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
                 ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-                TestInfo testInfo = (TestInfo) input.readObject();
-                log.info("recevied testInfo with table name: " + testInfo.getTableName());
+                TestInfoClient testInfoClient = (TestInfoClient) input.readObject();
+                log.info("recevied testInfo with table name: " + testInfoClient.getTableName());
                 
-                //Controller.runTest(testInfo);
+                TestInfo testInfo = new TestInfo(testInfoClient);
+        		Controller controller = new Controller();
+        		controller.start();
+        		
+        		controller.startTest(testInfo);
+        		while (controller.testStatus() != Controller.NOTRUNNING){
+        			log.info("Waiting: " +
+        					"testId: " + testInfo.getTestId() +
+        					" status: " + testInfo.testStatus +
+        					" progress: " + testInfo.getTestProgress()
+        					);
+        			try {
+        				Thread.sleep(10000);
+        			} catch (InterruptedException e) {
+        				// TODO Auto-generated catch block
+        				e.printStackTrace();
+        			}
+        		}
+        		
+        		log.info("test seems to be finished");
     
                 int returnValue = testInfo.getTestId();
                 //out.writeUTF(s);   

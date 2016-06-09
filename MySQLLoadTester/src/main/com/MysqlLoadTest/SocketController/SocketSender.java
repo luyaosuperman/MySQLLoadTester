@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.MysqlLoadTest.Utilities.TestInfo;
+import com.MysqlLoadTest.Utilities.TestInfoClient;
 
 public class SocketSender {
 	
@@ -59,7 +60,7 @@ public class SocketSender {
 		int initDataAmount = 10000;
 		
 		
-		TestInfo testInfo = new TestInfo(totalThreads,runCount,rowCount,"test",
+		TestInfoClient testInfoClient = new TestInfoClient(totalThreads,runCount,rowCount,"test",
 				tableName,createTableSql,insertPct,selectPct,updatePct,initDataAmount);
 		
     	
@@ -75,8 +76,8 @@ public class SocketSender {
 	            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
 	            ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
 	            
-	            log.info("sending TestInfo with table name: " + testInfo.getTableName());
-	            out.writeObject(testInfo);
+	            log.info("sending TestInfo with table name: " + testInfoClient.getTableName());
+	            out.writeObject(testInfoClient);
 	            log.info("sent");
 	            //out.writeUTF(str);  
 	              
