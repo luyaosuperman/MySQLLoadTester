@@ -19,18 +19,40 @@ import com.MysqlLoadTest.ExecutionUnit.Runner;
 import com.MysqlLoadTest.Utilities.TestInfo;
 import com.MysqlLoadTest.Utilities.TestInfoClient;
 
-public class SocketReceiver {
+public class SocketReceiver implements Runnable{
 	
 	private static final int PORT = 12345;
 	private static Logger log = LogManager.getLogger(SocketReceiver.class); 
 	
+	private ServerSocket serverSocket ;
+	
     public static void main(String[] args) {    
         log.info("SocketReceiver Started");    
-        SocketReceiver socketReceiver = new SocketReceiver();    
-        socketReceiver.init();    
+        Thread t = new Thread(new SocketReceiver());    
+        //socketReceiver.init();    
+        t.start();
     }    
     
-    public void init() {    
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+        try {    
+            this.serverSocket = new ServerSocket(PORT);    
+            while (!Thread.currentThread().isInterrupted()) {    
+                Socket client = serverSocket.accept();    
+                new HandlerThread(client);   
+                
+                Thread.sleep(1000);
+                
+            }   
+            System.out.println("ScoketReceiver stopping");
+        } catch (Exception e) {    
+            log.debug("Server crashed: " + e.getMessage());    
+        }    
+		
+	}   
+    
+    /*public void init() {    
         try {    
             ServerSocket serverSocket = new ServerSocket(PORT);    
             while (true) {    
@@ -42,7 +64,7 @@ public class SocketReceiver {
         } catch (Exception e) {    
             log.debug("Server crashed: " + e.getMessage());    
         }    
-    }   
+    }   */
     
     private class HandlerThread implements Runnable {    
         private Socket socket;    
@@ -100,7 +122,9 @@ public class SocketReceiver {
                 }    
             }   
         }    
-    }   
+    }
+
+
 
 
 

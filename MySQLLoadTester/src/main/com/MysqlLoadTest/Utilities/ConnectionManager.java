@@ -13,7 +13,8 @@ public class ConnectionManager {
 	}
 	
 	public static Connection getConnection(String databaseName){
-		String connString = String.format("jdbc:mysql://localhost/%s?user=%s&password=%s",databaseName,username,password);
+		String connString = String.format("jdbc:mysql://localhost/%s?user=%s&password=%s"
+				+ "&autoReconnect=true&useSSL=false",databaseName,username,password);
 		Connection connect;
 		try {
 			connect = DriverManager.getConnection(connString);

@@ -1,0 +1,7 @@
+(1) export as fat jar, with libs in sub folder
+
+(2) use 64 bit procrun
+
+E:\MyService1\myService1.exe //DS//MysqlLoadTester
+E:\MyService1\myService1.exe //IS//MysqlLoadTester --DisplayName="MysqlLoadTester" --Install=E:/MyService1/myService1.exe --Jvm=auto --StartMode=jvm --StopMode=jvm --StartClass=com.MysqlLoadTest.SocketController.SocketDaemon --StopClass=com.MysqlLoadTest.SocketController.SocketDaemon --Classpath=E:/MyService1/MysqlLoadTester-runnable.jar  --StartParams start  --StopParams  stop
+E:\MyService1\myService1.exe //TS//MysqlLoadTester 
