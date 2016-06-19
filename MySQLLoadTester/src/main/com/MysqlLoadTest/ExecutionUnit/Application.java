@@ -13,7 +13,7 @@ public class Application {
 	
 	public static void main(String[] args) {
 		//int testType = 1;
-		int totalThreads = 20;
+		int totalThreads = 50;
 		int runCount = 3000000;
 		int rowCount = 3000000;
 		

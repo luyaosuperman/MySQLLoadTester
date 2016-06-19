@@ -8,22 +8,23 @@ public class ConnectionManager {
 	private static String username = "root";
 	private static String password = "Chaemohz1quiegh";
 	
-	public static Connection getConnection(){
-		return getConnection("test");
-	}
+
+
 	
-	public static Connection getConnection(String databaseName){
-		String connString = String.format("jdbc:mysql://localhost/%s?user=%s&password=%s"
-				+ "&autoReconnect=true&useSSL=false",databaseName,username,password);
+	public static Connection getConnection(ConnectionInfo connectionInfo){
+		String connString = String.format("jdbc:mysql://%s:%s/%s?user=%s&password=%s"
+				+ "&autoReconnect=true&useSSL=false",
+				connectionInfo.hostname,connectionInfo.port,connectionInfo.databaseName,connectionInfo.username,connectionInfo.password);
 		Connection connect;
 		try {
 			connect = DriverManager.getConnection(connString);
+			return connect;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return null;
+			System.exit(1);
 		}
-		return connect;
+		return null;
 	}
 } 
  

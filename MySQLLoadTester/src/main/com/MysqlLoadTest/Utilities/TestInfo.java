@@ -48,6 +48,8 @@ public class TestInfo implements Serializable{
 	
 	private int maxId = 0;
 	
+	@LoadFromConfig
+	private ConnectionInfo connectionInfo;
 	
 	//private HashMap tableColMap;
 	public LinkedHashMap<String,Tuple<String,Integer>> tableColMap = new LinkedHashMap<String,Tuple<String,Integer>>();
@@ -76,6 +78,8 @@ public class TestInfo implements Serializable{
 		
 		assert insertPct + selectPct + updatePct == 100;
 		
+		ConfigLoader.loadFromConfig(this);
+		
 	}
 	public TestInfo(TestInfoClient testInfoClient){
 		this.setTotalThreads(testInfoClient.getTotalThreads());
@@ -103,12 +107,14 @@ public class TestInfo implements Serializable{
 			}
 			
 		}*/
+		
+		ConfigLoader.loadFromConfig(this);
 	}
 	
 
-	public static TestInfo getTestInfo(int testId)
+	public TestInfo getTestInfo(int testId)
 	{
-		Connection connect = ConnectionManager.getConnection("testreport");
+		Connection connect = ConnectionManager.getConnection(this.connectionInfo);
 		
 		TestInfo testInfo=null;
 	 	PreparedStatement preparedStatement = null;

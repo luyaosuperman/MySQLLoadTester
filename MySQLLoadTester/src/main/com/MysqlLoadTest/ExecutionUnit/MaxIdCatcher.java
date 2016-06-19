@@ -2,7 +2,10 @@ package com.MysqlLoadTest.ExecutionUnit;
 
 import java.sql.Connection;
 
+import com.MysqlLoadTest.Utilities.ConfigLoader;
+import com.MysqlLoadTest.Utilities.ConnectionInfo;
 import com.MysqlLoadTest.Utilities.ConnectionManager;
+import com.MysqlLoadTest.Utilities.LoadFromConfig;
 import com.MysqlLoadTest.Utilities.TestInfo;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,9 +23,13 @@ public class MaxIdCatcher extends Thread{
 	private PreparedStatement getMaxIdStatement;
 	private boolean stop = false;
 	
+	@LoadFromConfig
+	private ConnectionInfo connectionInfo;
+	
 	public MaxIdCatcher(TestInfo testInfo){
+		ConfigLoader.loadFromConfig(this);
 		this.testInfo = testInfo;
-		this.connect = ConnectionManager.getConnection("test");
+		this.connect = ConnectionManager.getConnection(this.connectionInfo);
 		
 		try {
 			this.getMaxIdStatement = this.connect.prepareStatement("select max(id) from "+this.testInfo.getTableName());

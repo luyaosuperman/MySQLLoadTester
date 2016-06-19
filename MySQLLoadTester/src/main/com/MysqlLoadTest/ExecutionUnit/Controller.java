@@ -10,7 +10,10 @@ import java.sql.Statement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.MysqlLoadTest.Utilities.ConfigLoader;
+import com.MysqlLoadTest.Utilities.ConnectionInfo;
 import com.MysqlLoadTest.Utilities.ConnectionManager;
+import com.MysqlLoadTest.Utilities.LoadFromConfig;
 import com.MysqlLoadTest.Utilities.TestInfo;
 import com.MysqlLoadTest.Utilities.Tuple;
 
@@ -30,7 +33,11 @@ public class Controller extends Thread{
 	public static final int NOTRUNNING=0;
 	public static final int RUNNING=1;
 	
+	@LoadFromConfig
+	private ConnectionInfo connectionInfo;
+	
 	public Controller(){
+		ConfigLoader.loadFromConfig(this);
 	}
 	
 	public void startTest(TestInfo testInfo){
@@ -53,7 +60,7 @@ public class Controller extends Thread{
 		while (true){
 			
 			if (this.controllerStatus == Controller.RUNNING){
-				this.connect = ConnectionManager.getConnection();
+				this.connect = ConnectionManager.getConnection(this.connectionInfo);
 				this.DropCreateTable();
 				this.parseTestTable();
 				

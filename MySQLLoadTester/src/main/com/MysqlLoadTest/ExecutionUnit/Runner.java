@@ -16,7 +16,10 @@ import java.lang.Thread;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.MysqlLoadTest.Utilities.ConfigLoader;
+import com.MysqlLoadTest.Utilities.ConnectionInfo;
 import com.MysqlLoadTest.Utilities.ConnectionManager;
+import com.MysqlLoadTest.Utilities.LoadFromConfig;
 import com.MysqlLoadTest.Utilities.TestInfo;
 import com.MysqlLoadTest.Utilities.Tuple;
 
@@ -54,8 +57,8 @@ public class Runner extends Thread {
 	private final int arraySize;
 	
 	
-	
-	private final int reportInterval = 100;
+	@LoadFromConfig
+	private int reportInterval;// = 100;
 	private boolean finished = false;
 	private long previousReportDateNS = 0;
 	
@@ -68,12 +71,18 @@ public class Runner extends Thread {
 	
 	private String[] dataSet;
 	
+	@LoadFromConfig
+	private ConnectionInfo connectionInfo;
+	
 	private String removeTrailing(String c){
 		return c.substring(0, c.length()-1);
 	}
 
 	public Runner(TestInfo testInfo,int threadID){
-		this.connect = ConnectionManager.getConnection();
+		
+		ConfigLoader.loadFromConfig(this);
+		
+		this.connect = ConnectionManager.getConnection(this.connectionInfo);
 		//this.outputPipe = PipeManager.getOutputPipe();
 		this.queue=PipeManager.getQueue();
 		this.threadID = threadID;

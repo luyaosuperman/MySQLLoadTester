@@ -12,7 +12,10 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.MysqlLoadTest.Utilities.ConfigLoader;
+import com.MysqlLoadTest.Utilities.ConnectionInfo;
 import com.MysqlLoadTest.Utilities.ConnectionManager;
+import com.MysqlLoadTest.Utilities.LoadFromConfig;
 import com.MysqlLoadTest.Utilities.TestInfo;
 import com.mysql.jdbc.Statement;
 
@@ -21,7 +24,9 @@ public class Reporter extends Thread{
 	private static Logger log = LogManager.getLogger(Reporter.class); 
 	private boolean stop = false;
 	private long previousReportTimeNS = 0;
-	private long reportIntervalNS = 1000000000;//nanoseconds
+	
+	@LoadFromConfig
+	private long reportIntervalNS;// = ConfigLoader.config.getLong("Reporter.reportIntervalNS");//1000000000;//nanoseconds
 	
 	private long runCount = 0;
 	private long insertCount;
@@ -40,6 +45,9 @@ public class Reporter extends Thread{
 	private TestInfo testInfo;
 	
 	private long referenceNanoSecond ;
+	
+	@LoadFromConfig
+	private ConnectionInfo connectionInfo;
 	
 	//TODO
 	//Prepare run distinguish: Done
@@ -100,10 +108,13 @@ public class Reporter extends Thread{
 	}
 	
 	public Reporter(TestInfo testInfo){
+		
+		ConfigLoader.loadFromConfig(this);
+		
 		this.testInfo = testInfo;
 		this.referenceNanoSecond = System.nanoTime();
 		
-		connect = ConnectionManager.getConnection("testReport");
+		connect = ConnectionManager.getConnection(this.connectionInfo);
 		if (this.testInfo.testStatus != TestInfo.PREPARING){
 			this.preRunSummary();
 			}
