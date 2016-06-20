@@ -15,48 +15,34 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.MysqlLoadTest.ExecutionUnit.TestController;
 import com.MysqlLoadTest.ObjectLibrary.TestList;
 import com.MysqlLoadTest.ObjectLibrary.TestProgress;
 import com.MysqlLoadTest.ObjectLibrary.TestResult;
+import com.MysqlLoadTest.Utilities.ConfigLoader;
+import com.MysqlLoadTest.Utilities.ConnectionInfo;
 import com.MysqlLoadTest.Utilities.ConnectionManager;
+import com.MysqlLoadTest.Utilities.LoadFromConfig;
+import com.MysqlLoadTest.Utilities.TestInfo;
 
 @RestController
 public class RESTController {
+	
+	@LoadFromConfig
+	private ConnectionInfo connectionInfo;
+	
+	public RESTController(){
+		ConfigLoader.loadFromConfig(this);
+	}
 
-    /*private static final String template = "Hello, %s!";
-    private final AtomicLong counter = new AtomicLong();
-
-    @RequestMapping("/validate")
-    public Greeting greeting(@RequestParam(value="name", defaultValue="Hello, World!") String name) {
-        return new Greeting(counter.incrementAndGet(),
-                            String.format(template, name));
-    }*/
-    
-	@CrossOrigin(origins = "http://localhost:1841")
-    @RequestMapping("/validate")
-    public UserInfo greeting(@RequestParam(value="username", defaultValue="user1") String username,
-    		@RequestParam(value="password", defaultValue="pass1") String password) {
-    	
-    	System.out.println("==== /validate ====");
-        return new UserInfo(username,password);
-        //http://localhost:8080/validate?username=luyao&password=123
-    }
-
-    @RequestMapping(value="/get_progress",method=RequestMethod.POST)
-    public TestProgress get_progress(@RequestParam(value="runCount") int runCount,
-    							   @RequestParam(value="totalThreads") int totalThreads
-    		){
-    	
-    	System.out.println("runCount:" + runCount);
-    	System.out.println("totalThreads:" + totalThreads);
-    	
-    	return new TestProgress(1,50);
-    	
+    @RequestMapping(value="/get_progress",method=RequestMethod.GET)
+    public TestInfo get_progress(){
+    	return WebBridge.testInfo;
     }
     
     @RequestMapping(value="/get_testList",method=RequestMethod.GET)
     public TestList getTestList(){
-    	Connection connect = ConnectionManager.getConnection("testReport");
+    	Connection connect = ConnectionManager.getConnection(this.connectionInfo);
     	TestList testList = new TestList();
     	
 		PreparedStatement preparedStatement = null;
@@ -122,7 +108,7 @@ public class RESTController {
     	int testId = testIdArray[0];
     	TestResult testResult = new TestResult();
 
-    	Connection connect = ConnectionManager.getConnection("testReport");
+    	Connection connect = ConnectionManager.getConnection(this.connectionInfo);
     	
 		PreparedStatement preparedStatement = null;
 		ResultSet rs;

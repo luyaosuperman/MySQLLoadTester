@@ -4,7 +4,7 @@
 <div>
 Test Configure
 <br></br>
-<form action="/landing" method="post" th:object="${testInfoClient}">
+<form action="/" method="post" th:object="${testInfoClient}">
   Run count per thread:<br></br>
   <input type="text" name="runCount" th:value="*{runCount}" ></input><br th:if="${#fields.hasErrors('runCount')} == true">runCount Error</br><br></br>
 

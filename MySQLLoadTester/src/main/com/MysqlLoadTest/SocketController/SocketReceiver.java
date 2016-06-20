@@ -14,7 +14,7 @@ import java.net.Socket;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.MysqlLoadTest.ExecutionUnit.Controller;
+import com.MysqlLoadTest.ExecutionUnit.TestController;
 import com.MysqlLoadTest.ExecutionUnit.Runner;
 import com.MysqlLoadTest.Utilities.TestInfo;
 import com.MysqlLoadTest.Utilities.TestInfoClient;
@@ -82,11 +82,11 @@ public class SocketReceiver implements Runnable{
                 log.info("recevied testInfo with table name: " + testInfoClient.getTableName());
                 
                 TestInfo testInfo = new TestInfo(testInfoClient);
-        		Controller controller = new Controller();
+        		TestController controller = new TestController();
         		controller.start();
         		
         		controller.startTest(testInfo);
-        		while (controller.testStatus() != Controller.NOTRUNNING){
+        		while (controller.testStatus() != TestController.NOTRUNNING){
         			log.info("Waiting: " +
         					"testId: " + testInfo.getTestId() +
         					" status: " + testInfo.testStatus +

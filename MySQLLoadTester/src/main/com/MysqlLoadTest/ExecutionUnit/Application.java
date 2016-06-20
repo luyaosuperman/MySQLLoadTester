@@ -14,8 +14,8 @@ public class Application {
 	public static void main(String[] args) {
 		//int testType = 1;
 		int totalThreads = 50;
-		int runCount = 3000000;
-		int rowCount = 3000000;
+		int runCount = 30000;
+		int rowCount = 30000;
 		
 		String tableName = "testLt";
 		String createTableSql = "create table testLt (" +
@@ -45,17 +45,17 @@ public class Application {
 		int updatePct = 60;
 		
 		
-		int initDataAmount = 1000000;
+		int initDataAmount = 10000;
 		
 		
 		TestInfo testInfo = new TestInfo(totalThreads,runCount,rowCount,"test",
 				tableName,createTableSql,insertPct,selectPct,updatePct,initDataAmount);
 		
-		Controller controller = new Controller();
+		TestController controller = new TestController();
 		controller.start();
 		
 		controller.startTest(testInfo);
-		while (controller.testStatus() != Controller.NOTRUNNING){
+		while (controller.testStatus() != TestController.NOTRUNNING){
 			log.info("Waiting: " +
 					"testId: " + testInfo.getTestId() +
 					" status: " + testInfo.testStatus +
@@ -74,7 +74,7 @@ public class Application {
 		log.info("Do it again");
 		
 		controller.startTest(testInfo);
-		while (controller.testStatus() != Controller.NOTRUNNING){
+		while (controller.testStatus() != TestController.NOTRUNNING){
 			log.info("Waiting: " +
 					"testId: " + testInfo.getTestId() +
 					" status: " + testInfo.testStatus +

@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
+
+@JsonRootName(value = "TestInfo")  
 public class TestInfo implements Serializable{
 
 	//private int testType; //1: Insert
@@ -40,13 +43,15 @@ public class TestInfo implements Serializable{
 	
 	///////////////
 	//Test status
+	public static final int PENDING = -1;
 	public static final int PREPARING = 0;
 	public static final int RUNNING = 1;
+	public static final int FINISHED = 2;
 	
-	public int testStatus = PREPARING;
+	public int testStatus = PENDING;
 	private double testProgress = 0;
 	
-	private int maxId = 0;
+	private int maxId = 1;
 	
 	@LoadFromConfig
 	private ConnectionInfo connectionInfo;

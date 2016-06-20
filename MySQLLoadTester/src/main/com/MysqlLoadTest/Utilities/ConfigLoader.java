@@ -58,21 +58,21 @@ public class ConfigLoader {
 	public static void loadFromConfig(Object o){
 		try {
 			Class<? extends Object> c = o.getClass();
-			log.info("working on class: " + c.getName());
+			//log.info("working on class: " + c.getName());
 			for (Field field: c.getDeclaredFields()){
-				log.info("Working on field: " + field.getName());
+				//log.info("Working on field: " + field.getName());
 				field.setAccessible(true);
 				if(field.isAnnotationPresent(LoadFromConfig.class)){
-					log.info("Annotation find on field: " + field.getName());
+					//log.info("Annotation find on field: " + field.getName());
 					//field.getType();
 					if (field.getType().isAssignableFrom(ConnectionInfo.class)){
-						log.info("working on field with class: " + field.getName() + " " + ConnectionInfo.class.getName());
+						//log.info("working on field with class: " + field.getName() + " " + ConnectionInfo.class.getName());
 						ConnectionInfo connectionInfo = new ConnectionInfo();
 	
 						field.set(o, connectionInfo);
 						for (Field subField: field.getType().getDeclaredFields()){
 							subField.setAccessible(true);
-							log.info("working on subField: " + subField.getName());
+							//log.info("working on subField: " + subField.getName());
 							setValue(subField,connectionInfo,c.getSimpleName() + "." + field.getName() + "." + subField.getName());
 							//subField.set(connectionInfo, subField.getType().cast(config.getString(
 							//		c.getSimpleName() + "." + field.getName() + "." + subField.getName())));

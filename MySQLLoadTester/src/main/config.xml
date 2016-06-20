@@ -39,7 +39,7 @@
 		<databaseName>test</databaseName>
 	</connectionInfo>
 </TestInfo>
-<Controller>
+<TestController>
 	<connectionInfo>
 		<username>root</username>
 		<password>Password123!</password>
@@ -47,5 +47,14 @@
 		<port>3306</port>
 		<databaseName>test</databaseName>
 	</connectionInfo>
-</Controller>
+</TestController>
+<RESTController>
+	<connectionInfo>
+		<username>root</username>
+		<password>Password123!</password>
+		<hostname>localhost</hostname>
+		<port>3306</port>
+		<databaseName>testreport</databaseName>
+	</connectionInfo>
+</RESTController>
 </ApplicationConfiguration>

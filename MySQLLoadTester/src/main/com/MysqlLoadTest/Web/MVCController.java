@@ -15,6 +15,7 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import com.MysqlLoadTest.SocketController.SocketSender;
+import com.MysqlLoadTest.Utilities.TestInfo;
 import com.MysqlLoadTest.Utilities.TestInfoClient;
 
 @Controller
@@ -43,13 +44,23 @@ public class MVCController  extends WebMvcConfigurerAdapter {
     		return "landing";
     	}
     	
-    	int testId = SocketSender.sendFromSocket(testInfoClient);
-    	//int testId = 20;
+    	//int testId = SocketSender.sendFromSocket(testInfoClient);
+    	WebBridge.testInfo = new  TestInfo(testInfoClient);
+    	WebBridge.controller.startTest(WebBridge.testInfo);
     	
-    	//return "forward:/get_progress";
-    	return "redirect:/get_graph?testId="+testId;
+    	return "test_progress";
+    	
+    	//return "redirect:/get_graph?testId="+testId;
     	
     }
+    
+    @RequestMapping(value="/test_progress", method=RequestMethod.GET)
+    public String test_prepare(){
+    	
+    	return "test_progress";
+    }
+    
+    
     
     @RequestMapping(value="/get_graph", method=RequestMethod.GET)
     public String getGraph(@RequestParam(value="testId", required=true) int[] testIdArray, Model model){
@@ -57,7 +68,7 @@ public class MVCController  extends WebMvcConfigurerAdapter {
     	for (int testId: testIdArray){
     		System.out.println("testId: " + testId);
     	}
-    	//model.addAttribute("testId",testId);
+
     	return "get_graph";
     }
     

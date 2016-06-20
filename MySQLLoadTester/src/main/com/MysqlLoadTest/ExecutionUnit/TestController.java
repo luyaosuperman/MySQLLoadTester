@@ -17,9 +17,9 @@ import com.MysqlLoadTest.Utilities.LoadFromConfig;
 import com.MysqlLoadTest.Utilities.TestInfo;
 import com.MysqlLoadTest.Utilities.Tuple;
 
-public class Controller extends Thread{
+public class TestController extends Thread{
 
-	private static Logger log = LogManager.getLogger(Controller.class); 
+	private static Logger log = LogManager.getLogger(TestController.class); 
 
 	
 	private Connection connect;
@@ -36,17 +36,17 @@ public class Controller extends Thread{
 	@LoadFromConfig
 	private ConnectionInfo connectionInfo;
 	
-	public Controller(){
+	public TestController(){
 		ConfigLoader.loadFromConfig(this);
 	}
 	
 	public void startTest(TestInfo testInfo){
 		//start test if none is running
 		//otherwise throw an error
-		if (this.controllerStatus!= Controller.NOTRUNNING){
+		if (this.controllerStatus!= TestController.NOTRUNNING){
 			throw new IllegalStateException();
 		}else{
-			this.controllerStatus = Controller.RUNNING;
+			this.controllerStatus = TestController.RUNNING;
 			this.testInfo = testInfo;
 		}
 	}
@@ -59,7 +59,7 @@ public class Controller extends Thread{
 		
 		while (true){
 			
-			if (this.controllerStatus == Controller.RUNNING){
+			if (this.controllerStatus == TestController.RUNNING){
 				this.connect = ConnectionManager.getConnection(this.connectionInfo);
 				this.DropCreateTable();
 				this.parseTestTable();
@@ -68,8 +68,9 @@ public class Controller extends Thread{
 				this.prepareData();
 				log.info("runTest()");
 				this.runTest();
+				this.testInfo.testStatus = TestInfo.FINISHED;
 				
-				this.controllerStatus = Controller.NOTRUNNING;
+				this.controllerStatus = TestController.NOTRUNNING;
 			}else{
 				try {
 					Thread.sleep(1000);
@@ -129,12 +130,14 @@ public class Controller extends Thread{
 	}
 	
 	public void prepareData(){
-		assert this.testInfo.testStatus == TestInfo.PREPARING;
+		this.testInfo.testStatus = TestInfo.PREPARING;
 		this.runTest();
 		this.testInfo.testStatus = TestInfo.RUNNING;
+		
 	}
 	
 	private int runTest(){
+		
 		
 		Runner[] instanceArray = new Runner[testInfo.getTotalThreads()];
 		int finishedThreads = 0;
@@ -168,6 +171,7 @@ public class Controller extends Thread{
 		log.info("Finish");
 		reporter.stopReporter();
 		maxIdCatcher.stopMaxIdCatcher();;
+		
 		
 		return testInfo.getTestId();
 	}
