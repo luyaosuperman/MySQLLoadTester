@@ -1,0 +1,41 @@
+<html>
+<body>
+
+<div>
+Test Configure
+<br></br>
+<form action="/landing" method="post" th:object="${testInfoClient}">
+  Run count per thread:<br></br>
+  <input type="text" name="runCount" th:value="*{runCount}" ></input><br th:if="${#fields.hasErrors('runCount')} == true">runCount Error</br><br></br>
+
+  Row count per thread:<br></br>
+  <input type="text" name="RowCount" th:value="*{rowCount}" ></input><br th:if="${#fields.hasErrors('rowCount')} == true">rowCount Error</br><br></br>
+
+  totalThreads:<br></br>
+  <input type="text" name="totalThreads" th:value="*{totalThreads}"></input><br th:if="${#fields.hasErrors('totalThreads')} == true">totalThreads Error</br><br></br>
+
+  comment:<br></br>
+  <input type="text" name="comment" th:value="*{comment}"></input><br th:if="${#fields.hasErrors('comment')} == true">comment Error</br><br></br>
+
+  tableName:<br></br>
+  <input type="text" name="tableName" th:value="*{tableName}"></input><br th:if="${#fields.hasErrors('tableName')} == true">tableName Error</br><br></br>
+    createTableSQL:<br></br>
+  <input type="text" name="createTableSQL" th:value="*{createTableSQL}"></input><br th:if="${#fields.hasErrors('createTableSQL')} == true">createTableSQL Error</br><br></br>
+    insertPct:<br></br>
+  <input type="text" name="insertPct" th:value="*{insertPct}"></input><br th:if="${#fields.hasErrors('insertPct')} == true">insertPct Error</br><br></br>
+    selectPct:<br></br>
+  <input type="text" name="selectPct" th:value="*{selectPct}"></input><br th:if="${#fields.hasErrors('selectPct')} == true">selectPct Error</br><br></br>
+    updatePct:<br></br>
+  <input type="text" name="updatePct" th:value="*{updatePct}"></input><br th:if="${#fields.hasErrors('updatePct')} == true">updatePct Error</br><br></br>
+    initDataAmount:<br></br>
+  <input type="text" name="initDataAmount" th:value="*{initDataAmount}"></input><br th:if="${#fields.hasErrors('initDataAmount')} == true">initDataAmount Error</br><br></br>
+
+
+  <input type="submit" value="Submit"></input>
+</form>
+
+</div>
+
+
+</body>
+</html>
