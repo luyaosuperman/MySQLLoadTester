@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,12 +15,27 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import com.MysqlLoadTest.ExecutionUnit.TestController;
 import com.MysqlLoadTest.SocketController.SocketSender;
 import com.MysqlLoadTest.Utilities.TestInfo;
 import com.MysqlLoadTest.Utilities.TestInfoClient;
 
 @Controller
 public class MVCController  extends WebMvcConfigurerAdapter {
+	
+	private TestController testController;
+	private TestInfo testInfo;
+	
+	@Autowired
+    public void setTestController(TestController testController) {
+        this.testController = testController;
+        //this.testController.start();
+    }
+	
+	@Autowired
+    public void setTestInfo(TestInfo testInfo) {
+        this.testInfo = testInfo;
+    }
 	
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
@@ -34,7 +50,13 @@ public class MVCController  extends WebMvcConfigurerAdapter {
     
     @RequestMapping(value="/", method=RequestMethod.GET)
     public String landing( TestInfoClient testInfoClient) {
-        return "landing";
+    	//if (WebBridge.controller.testStatus() != TestController.RUNNING){
+    	if (testController.testStatus() != TestController.RUNNING){
+    		return "landing";
+    	}else{
+    		return "redirect:/test_progress";
+    	}
+        
     }
     
     @RequestMapping(value="/",method=RequestMethod.POST)
@@ -45,10 +67,12 @@ public class MVCController  extends WebMvcConfigurerAdapter {
     	}
     	
     	//int testId = SocketSender.sendFromSocket(testInfoClient);
-    	WebBridge.testInfo = new  TestInfo(testInfoClient);
-    	WebBridge.controller.startTest(WebBridge.testInfo);
+    	//WebBridge.testInfo = new  TestInfo(testInfoClient);
+    	this.testInfo.setTestInfoClient(testInfoClient);
+    	//WebBridge.controller.startTest(WebBridge.testInfo);
+    	testController.startTest(this.testInfo);
     	
-    	return "test_progress";
+    	return "redirect:/test_progress";
     	
     	//return "redirect:/get_graph?testId="+testId;
     	

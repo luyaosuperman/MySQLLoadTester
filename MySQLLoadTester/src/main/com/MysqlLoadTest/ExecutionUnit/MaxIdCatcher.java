@@ -23,13 +23,13 @@ public class MaxIdCatcher extends Thread{
 	private PreparedStatement getMaxIdStatement;
 	private boolean stop = false;
 	
-	@LoadFromConfig
-	private ConnectionInfo connectionInfo;
+	//@LoadFromConfig
+	//private ConnectionInfo connectionInfo;
 	
 	public MaxIdCatcher(TestInfo testInfo){
 		ConfigLoader.loadFromConfig(this);
 		this.testInfo = testInfo;
-		this.connect = ConnectionManager.getConnection(this.connectionInfo);
+		this.connect = ConnectionManager.getConnection(this.testInfo.connectionInfo);
 		
 		try {
 			this.getMaxIdStatement = this.connect.prepareStatement("select max(id) from "+this.testInfo.getTableName());

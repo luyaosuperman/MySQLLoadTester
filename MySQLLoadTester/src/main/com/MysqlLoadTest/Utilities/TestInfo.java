@@ -54,7 +54,7 @@ public class TestInfo implements Serializable{
 	private int maxId = 1;
 	
 	@LoadFromConfig
-	private ConnectionInfo connectionInfo;
+	public ConnectionInfo connectionInfo;
 	
 	//private HashMap tableColMap;
 	public LinkedHashMap<String,Tuple<String,Integer>> tableColMap = new LinkedHashMap<String,Tuple<String,Integer>>();
@@ -64,7 +64,9 @@ public class TestInfo implements Serializable{
 	
 	//TODO: move getTestInfo here
 
-	
+	public TestInfo(){
+		ConfigLoader.loadFromConfig(this);
+	}
 	public TestInfo(//int testType,
 			int totalThreads, long runCount, long rowCount, String comment, 
 			String tableName, String createTableSql, int insertPct, int selectPct, int updatePct, int initDataAmount   ){
@@ -87,6 +89,11 @@ public class TestInfo implements Serializable{
 		
 	}
 	public TestInfo(TestInfoClient testInfoClient){
+		this.setTestInfoClient( testInfoClient);
+		ConfigLoader.loadFromConfig(this);
+	}
+	
+	public void setTestInfoClient(TestInfoClient testInfoClient){
 		this.setTotalThreads(testInfoClient.getTotalThreads());
 		this.setRunCount(testInfoClient.getRunCount());
 		this.setRowCount(testInfoClient.getRowCount());
@@ -113,7 +120,6 @@ public class TestInfo implements Serializable{
 			
 		}*/
 		
-		ConfigLoader.loadFromConfig(this);
 	}
 	
 

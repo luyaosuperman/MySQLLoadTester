@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -31,13 +32,29 @@ public class RESTController {
 	@LoadFromConfig
 	private ConnectionInfo connectionInfo;
 	
+	
+	private TestController testController;
+	private TestInfo testInfo;
+	
+	@Autowired
+    public void setTestController(TestController testController) {
+        this.testController = testController;
+        //this.testController.start();
+    }
+	
+	@Autowired
+    public void setTestInfo(TestInfo testInfo) {
+        this.testInfo = testInfo;
+    }
+	
 	public RESTController(){
 		ConfigLoader.loadFromConfig(this);
 	}
 
     @RequestMapping(value="/get_progress",method=RequestMethod.GET)
     public TestInfo get_progress(){
-    	return WebBridge.testInfo;
+    	//return WebBridge.testInfo;
+    	return this.testInfo;
     }
     
     @RequestMapping(value="/get_testList",method=RequestMethod.GET)

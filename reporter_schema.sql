@@ -28,6 +28,7 @@ create table testRuntimeInfo
 	runCount  bigint unsigned not null,
 	insertCount  bigint unsigned not null,
 	updateCount  bigint unsigned not null,
-	selectCount  bigint unsigned not null
+	selectCount  bigint unsigned not null,
 	#intervalExecution  int unsigned not null
+	index testId(testId)
 );

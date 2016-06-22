@@ -33,11 +33,12 @@ public class TestController extends Thread{
 	public static final int NOTRUNNING=0;
 	public static final int RUNNING=1;
 	
-	@LoadFromConfig
-	private ConnectionInfo connectionInfo;
+	//@LoadFromConfig
+	//private ConnectionInfo connectionInfo;
 	
 	public TestController(){
 		ConfigLoader.loadFromConfig(this);
+		this.start();
 	}
 	
 	public void startTest(TestInfo testInfo){
@@ -60,7 +61,7 @@ public class TestController extends Thread{
 		while (true){
 			
 			if (this.controllerStatus == TestController.RUNNING){
-				this.connect = ConnectionManager.getConnection(this.connectionInfo);
+				this.connect = ConnectionManager.getConnection(this.testInfo.connectionInfo);
 				this.DropCreateTable();
 				this.parseTestTable();
 				

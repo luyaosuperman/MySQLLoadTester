@@ -71,8 +71,8 @@ public class Runner extends Thread {
 	
 	private String[] dataSet;
 	
-	@LoadFromConfig
-	private ConnectionInfo connectionInfo;
+	//@LoadFromConfig
+	//private ConnectionInfo connectionInfo;
 	
 	private String removeTrailing(String c){
 		return c.substring(0, c.length()-1);
@@ -82,7 +82,7 @@ public class Runner extends Thread {
 		
 		ConfigLoader.loadFromConfig(this);
 		
-		this.connect = ConnectionManager.getConnection(this.connectionInfo);
+		this.connect = ConnectionManager.getConnection(this.testInfo.connectionInfo);
 		//this.outputPipe = PipeManager.getOutputPipe();
 		this.queue=PipeManager.getQueue();
 		this.threadID = threadID;

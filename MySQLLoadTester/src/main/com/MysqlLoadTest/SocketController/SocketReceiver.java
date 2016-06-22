@@ -83,7 +83,7 @@ public class SocketReceiver implements Runnable{
                 
                 TestInfo testInfo = new TestInfo(testInfoClient);
         		TestController controller = new TestController();
-        		controller.start();
+        		//controller.start();
         		
         		controller.startTest(testInfo);
         		while (controller.testStatus() != TestController.NOTRUNNING){

@@ -52,7 +52,7 @@ public class Application {
 				tableName,createTableSql,insertPct,selectPct,updatePct,initDataAmount);
 		
 		TestController controller = new TestController();
-		controller.start();
+		//controller.start();
 		
 		controller.startTest(testInfo);
 		while (controller.testStatus() != TestController.NOTRUNNING){

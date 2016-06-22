@@ -1,24 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <ApplicationConfiguration>
 <Runner>
-	<connectionInfo>
-		<username>root</username>
-		<password>Password123!</password>
-		<hostname>localhost</hostname>
-		<port>3306</port>
-		<databaseName>test</databaseName>
-	</connectionInfo>
 	<reportInterval>100</reportInterval>
 </Runner>
-<MaxIdCatcher>
-	<connectionInfo>
-		<username>root</username>
-		<password>Password123!</password>
-		<hostname>localhost</hostname>
-		<port>3306</port>
-		<databaseName>test</databaseName>
-	</connectionInfo>
-</MaxIdCatcher>
 
 <Reporter>
 	<reportIntervalNS>1000000000</reportIntervalNS>
@@ -39,15 +23,6 @@
 		<databaseName>test</databaseName>
 	</connectionInfo>
 </TestInfo>
-<TestController>
-	<connectionInfo>
-		<username>root</username>
-		<password>Password123!</password>
-		<hostname>localhost</hostname>
-		<port>3306</port>
-		<databaseName>test</databaseName>
-	</connectionInfo>
-</TestController>
 <RESTController>
 	<connectionInfo>
 		<username>root</username>
