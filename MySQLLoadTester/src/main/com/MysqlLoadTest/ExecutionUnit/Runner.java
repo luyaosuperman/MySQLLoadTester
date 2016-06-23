@@ -81,6 +81,7 @@ public class Runner extends Thread {
 	public Runner(TestInfo testInfo,int threadID){
 		
 		ConfigLoader.loadFromConfig(this);
+		this.testInfo.connectionInfo = this.testInfo.connectionInfo;
 		
 		this.connect = ConnectionManager.getConnection(this.testInfo.connectionInfo);
 		//this.outputPipe = PipeManager.getOutputPipe();

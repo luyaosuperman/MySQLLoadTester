@@ -6,5 +6,6 @@
 
 	<bean id="testController" class="com.MysqlLoadTest.ExecutionUnit.TestController" />
 	<bean id="testInfo"       class="com.MysqlLoadTest.Utilities.TestInfo" />
+	
 
 </beans>

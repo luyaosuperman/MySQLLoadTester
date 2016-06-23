@@ -24,6 +24,13 @@
             <optional>true</optional>
         </dependency>
         
+        <!-- jsonrpc4j -->
+    	<dependency>
+			<groupId>com.github.briandilley.jsonrpc4j</groupId>
+			<artifactId>jsonrpc4j</artifactId>
+        	<version>1.4.5</version>
+    	</dependency>
+        
     </dependencies>
 
     <properties>
