@@ -27,7 +27,7 @@ import com.MysqlLoadTest.Utilities.LoadFromConfig;
 import com.MysqlLoadTest.Utilities.TestInfo;
 
 @RestController
-public class RESTController {
+public class TestRESTController {
 	
 	@LoadFromConfig
 	private ConnectionInfo connectionInfo;
@@ -47,7 +47,7 @@ public class RESTController {
         this.testInfo = testInfo;
     }
 	
-	public RESTController(){
+	public TestRESTController(){
 		ConfigLoader.loadFromConfig(this);
 	}
 
@@ -119,9 +119,9 @@ public class RESTController {
     public TestResult getData(@RequestParam(value="testId", required=true) int[] testIdArray){
     	
     	//System.out.println("/get_data invoked, with testId: " + testId);
-    	for (int testId: testIdArray){
+    	/*for (int testId: testIdArray){
     		System.out.println("testId: " + testId);
-    	}
+    	}*/
     	int testId = testIdArray[0];
     	TestResult testResult = new TestResult();
 
@@ -172,6 +172,14 @@ public class RESTController {
 			e.printStackTrace();
 		}
     	return testResult;
+    }
+    
+    @RequestMapping(value="/get_zabbix",method=RequestMethod.GET)
+    public Object getZabbix(@RequestParam(value="testId", required=true) int[] testIdArray){
+    	int testId = testIdArray[0];
+    	
+    	return null;
+    	
     }
 
 }

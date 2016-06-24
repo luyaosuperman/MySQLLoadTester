@@ -56,6 +56,9 @@ public class TestInfo implements Serializable{
 	@LoadFromConfig
 	public ConnectionInfo connectionInfo;
 	
+	@LoadFromConfig
+	public String zabbixHostIP;
+	
 	//private HashMap tableColMap;
 	public LinkedHashMap<String,Tuple<String,Integer>> tableColMap = new LinkedHashMap<String,Tuple<String,Integer>>();
 	//name, class, length

@@ -14,6 +14,7 @@
 		<databaseName>testreport</databaseName>
 	</connectionInfo>
 </Reporter>
+
 <TestInfo>
 	<connectionInfo>
 		<username>root</username>
@@ -22,7 +23,9 @@
 		<port>3306</port>
 		<databaseName>test</databaseName>
 	</connectionInfo>
+	<zabbixHostIP>192.168.1.xxx</zabbixHostIP>
 </TestInfo>
+
 <RESTController>
 	<connectionInfo>
 		<username>root</username>
@@ -32,4 +35,12 @@
 		<databaseName>testreport</databaseName>
 	</connectionInfo>
 </RESTController>
+
+
+<Zabbix3>
+	<username>admin</username>
+	<password>zabbix</password>
+	<url>http://192.168.1.137/zabbix/api_jsonrpc.php</url>
+</Zabbix3>
+
 </ApplicationConfiguration>

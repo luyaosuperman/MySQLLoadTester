@@ -21,7 +21,7 @@ import com.MysqlLoadTest.Utilities.TestInfo;
 import com.MysqlLoadTest.Utilities.TestInfoClient;
 
 @Controller
-public class MVCController  extends WebMvcConfigurerAdapter {
+public class TestMVCController  extends WebMvcConfigurerAdapter {
 	
 	private TestController testController;
 	private TestInfo testInfo;

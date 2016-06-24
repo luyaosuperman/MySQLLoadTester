@@ -81,13 +81,12 @@ public class Runner extends Thread {
 	public Runner(TestInfo testInfo,int threadID){
 		
 		ConfigLoader.loadFromConfig(this);
-		this.testInfo.connectionInfo = this.testInfo.connectionInfo;
+		this.testInfo = testInfo;
 		
 		this.connect = ConnectionManager.getConnection(this.testInfo.connectionInfo);
 		//this.outputPipe = PipeManager.getOutputPipe();
 		this.queue=PipeManager.getQueue();
 		this.threadID = threadID;
-		this.testInfo = testInfo;
 		if(this.testInfo.testStatus == TestInfo.PREPARING){
 			this.rowCount = this.testInfo.getInitDataAmount();
 			this.insertPct = 100;

@@ -1,4 +1,4 @@
-package com.MysqlLoadTest.ZabbixIntegration;
+package com.MysqlLoadTest.Zabbix.Params;
 
 import java.util.ArrayList;
 
