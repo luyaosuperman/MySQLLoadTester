@@ -79,7 +79,7 @@ public class TestRESTController {
 														"info.selectPct, "+
 														"info.updatePct, "+
 														"info.initDataAmount "+
-														"from testinfo info; ");
+														"from testInfo info; ");
 			String[] properties = {
 					"id",
 					"timestamp",
@@ -141,13 +141,13 @@ public class TestRESTController {
 					"@lasttotalinsertCount := a.insertCount, "+
 					"@lasttotalupdateCount := a.updateCount, "+
 					"@lasttotalselectCount := a.selectCount "+
-					"from testreport.testruntimeinfo a, "+
+					"from testreport.testRuntimeInfo a, "+
 					"(select "+
 					"@lasttotalrunCount := 0, "+
 					"@lasttotalinsertCount := 0, "+
 					"@lasttotalupdateCount := 0, "+
 					"@lasttotalselectCount := 0, "+
-					"@rowcount := initdataamount from testinfo where id = ? "+
+					"@rowcount := initdataamount from testInfo where id = ? "+
 					") SQLVars "+
 					"where testid = ? ");
 			preparedStatement.setInt(1, testId);

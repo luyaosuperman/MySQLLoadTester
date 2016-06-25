@@ -29,6 +29,7 @@
     	  parseParameters();
     	  loadData();
     	  loadExistTests();
+    	  loadItemsTests();
       }
       
       function drawChart(rawData) {
@@ -81,80 +82,177 @@
    	  xhttp.send();
     }
      
+    function createTestIdForm( data, formName, formMethod, formAction){
+		var form = document.createElement('FORM');
+		form.name=formName;
+		form.method=formMethod;
+		form.action=formAction;
+		
+		var tbl = document.createElement('table');
+		tbl.style.width = '100%';
+	    tbl.setAttribute('border', '1');
+		var tbdy = document.createElement('tbody');
+		//th
+		var tr = document.createElement('tr');
+		
+		var th = document.createElement('th');
+		th.appendChild(document.createTextNode("Select"))
+		tr.appendChild(th)
+		var properties = Object.keys(data[0])
+		
+		for (var i=0; i<properties.length; i++){
+			var th = document.createElement('th');
+			th.appendChild(document.createTextNode(properties[i]))
+			tr.appendChild(th)
+		}
+		tbdy.appendChild(tr);
+		
+		//td
+	    for (var i = 0; i < data.length; i++) {
+	        var tr = document.createElement('tr');
+	        
+	        //checkbox
+	        var td = document.createElement('td');
+	        var checkbox = document.createElement('input');
+	        checkbox.type='checkbox'
+	        checkbox.name='testId';
+	        checkbox.value=data[i]["id"]
+	        if(queryDict['testId'].indexOf(checkbox.value)!=-1){
+	        	checkbox.checked = true;
+	        }
+	        //checkbox.text=document.createTextNode(testList[i]["testId"])
+	        td.appendChild(checkbox)
+	        tr.appendChild(td)
+
+			//content			        
+	        for (var j = 0; j < properties.length; j++) {
+	            var td = document.createElement('td');
+	            td.appendChild(document.createTextNode(data[i][properties[j]]))
+	            tr.appendChild(td)
+	        }
+	        tbdy.appendChild(tr);
+	    }
+	    tbl.appendChild(tbdy);
+	    
+	    form.appendChild(tbl);
+	    
+	    //button
+	    var button = document.createElement('input');
+	    button.type='submit';
+	    button.value='submit';
+	    form.appendChild(button);
+	    
+	    return form
+    } 
+     
     function loadExistTests(){
     	var xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = function() {
 			if (xhttp.readyState == 4 && xhttp.status == 200) {
 				var obj = JSON.parse(xhttp.responseText)["TestList"];
-				var properties = obj["properties"]
+				//var properties = obj["properties"]
 				var testList = obj["testList"]
 				
-				
-				var form = document.createElement('FORM');
-				form.name='existingTests';
-				form.method='GET';
-				form.action='/get_graph';
-				
-				var tbl = document.createElement('table');
-				tbl.style.width = '100%';
-			    tbl.setAttribute('border', '1');
-				var tbdy = document.createElement('tbody');
-				//th
-				var tr = document.createElement('tr');
-				
-				var th = document.createElement('th');
-				th.appendChild(document.createTextNode("Select"))
-				tr.appendChild(th)
-				
-				for (var i=0; i<properties.length; i++){
-					var th = document.createElement('th');
-					th.appendChild(document.createTextNode(properties[i]))
-					tr.appendChild(th)
-				}
-				tbdy.appendChild(tr);
-				
-				//td
-			    for (var i = 0; i < testList.length; i++) {
-			        var tr = document.createElement('tr');
-			        
-			        //checkbox
-			        var td = document.createElement('td');
-			        var checkbox = document.createElement('input');
-			        checkbox.type='checkbox'
-			        checkbox.name='testId';
-			        checkbox.value=testList[i]["id"]
-			        if(queryDict['testId'].indexOf(checkbox.value)!=-1){
-			        	checkbox.checked = true;
-			        }
-			        //checkbox.text=document.createTextNode(testList[i]["testId"])
-			        td.appendChild(checkbox)
-			        tr.appendChild(td)
-
-					//content			        
-			        for (var j = 0; j < properties.length; j++) {
-			            var td = document.createElement('td');
-			            td.appendChild(document.createTextNode(testList[i][properties[j]]))
-			            tr.appendChild(td)
-			        }
-			        tbdy.appendChild(tr);
-			    }
-			    tbl.appendChild(tbdy);
-			    
-			    form.appendChild(tbl);
-			    
-			    //button
-			    var button = document.createElement('input');
-			    button.type='submit';
-			    button.value='submit';
-			    form.appendChild(button);
-			  
-			    
 			    var div = document.getElementById('existingTests');
-			    div.appendChild(form)
+			    div.appendChild(createTestIdForm(testList,'existingTests','GET','/get_graph'))
 				
 			}
 		};
 		xhttp.open("GET", "/get_testList", true);
+		xhttp.send();
+    }
+    
+    
+    
+    
+    
+    
+    function createItemsForm( data, formName, formAction){
+    	console.log(data[0])
+		var form = document.createElement('FORM');
+		form.name=formName;
+		//form.method=formMethod;
+		form.action=formAction;
+		
+		
+		
+		var tbl = document.createElement('table');
+		tbl.style.width = '100%';
+	    tbl.setAttribute('border', '1');
+		var tbdy = document.createElement('tbody');
+		//th
+		var tr = document.createElement('tr');
+		
+		var th = document.createElement('th');
+		th.appendChild(document.createTextNode("Select"))
+		tr.appendChild(th)
+		var properties = Object.keys(data[0])
+		
+		for (var i=0; i<properties.length; i++){
+			var th = document.createElement('th');
+			th.appendChild(document.createTextNode(properties[i]))
+			tr.appendChild(th)
+		}
+		tbdy.appendChild(tr);
+		
+		//td
+	    for (var i = 0; i < data.length; i++) {
+	        var tr = document.createElement('tr');
+	        
+	        //checkbox
+	        var td = document.createElement('td');
+	        var checkbox = document.createElement('input');
+	        checkbox.type='checkbox'
+	        checkbox.name='itemid';
+	        checkbox.value=data[i]["itemid"]
+	        /*if(queryDict['testId'].indexOf(checkbox.value)!=-1){
+	        	checkbox.checked = true;
+	        }*/
+	        //checkbox.text=document.createTextNode(testList[i]["testId"])
+	        td.appendChild(checkbox)
+	        tr.appendChild(td)
+
+			//content			        
+	        for (var j = 0; j < properties.length; j++) {
+	            var td = document.createElement('td');
+	            td.appendChild(document.createTextNode(data[i][properties[j]]))
+	            tr.appendChild(td)
+	        }
+	        tbdy.appendChild(tr);
+	    }
+	    tbl.appendChild(tbdy);
+	    
+	    form.appendChild(tbl);
+	    
+	    //button
+	    var button = document.createElement('input');
+	    button.type='submit';
+	    button.value='submit';
+	    //button.onclick="loadZabbixHistory()"
+	    form.appendChild(button);
+	    
+	    return form
+    } 
+    
+    function loadItemsTests(){
+    	var xhttp = new XMLHttpRequest();
+    	
+    	var testIdArray = queryDict["testId"];
+    	var testId = testIdArray[0];
+    	
+		xhttp.onreadystatechange = function() {
+			if (xhttp.readyState == 4 && xhttp.status == 200) {
+				var obj = JSON.parse(xhttp.responseText).ArrayList;
+				//var properties = obj["properties"]
+				console.log("testId: " + testId)
+				console.log(obj)
+				
+			    var div = document.getElementById('zabbixItems');
+			    div.appendChild(createItemsForm(obj,'zabbixItems','javascript:loadZabbixHistory()'))
+				
+			}
+		};
+		xhttp.open("GET", "/get_zabbix_items?testId="+testId, true);
 		xhttp.send();
     }
       

@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 import org.apache.logging.log4j.LogManager;
@@ -84,6 +85,7 @@ public class Reporter extends Thread{
 			
 			
 			preparedStatement.executeUpdate();
+			testInfo.setTestDate(new Date());
 			
 			ResultSet rs = preparedStatement.getGeneratedKeys();
 			if (rs.next()) {

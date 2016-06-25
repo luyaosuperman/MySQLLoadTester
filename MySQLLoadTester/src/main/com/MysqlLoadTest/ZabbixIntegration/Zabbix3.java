@@ -3,6 +3,7 @@ package com.MysqlLoadTest.ZabbixIntegration;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,26 +25,17 @@ public class Zabbix3{
 
 	private static Logger log = LogManager.getLogger(Zabbix3.class); 
 	
-	private TestInfo testInfo;
+	//private TestInfo testInfo;
 	
 	//@LoadFromConfig
 	//private String zabbixServerHostname;
 	
-	@LoadFromConfig
-	private String username;// = "admin";
-	
-	@LoadFromConfig
-	private String password;// = "zabbix";
+	@LoadFromConfig	private String username;// = "admin";
+	@LoadFromConfig	private String password;// = "zabbix";
+	@LoadFromConfig	private String url;// = "http://192.168.1.137/zabbix/api_jsonrpc.php";
 	
 	private String authToken=null;
-	
-	@LoadFromConfig
-	private String url;// = "http://192.168.1.137/zabbix/api_jsonrpc.php";
-	
-	
 	Map<String,Object> additionalJsonContent;
-	
-	
 	private JsonRpcHttpClient client;
 	
 	Zabbix3(){
@@ -55,11 +47,31 @@ public class Zabbix3{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		this.Auth();
 		
 	}
 	
-	public void setTestInfo(TestInfo testInfo){
-		this.testInfo = testInfo;
+	//public void setTestInfo(TestInfo testInfo){		this.testInfo = testInfo;	}
+	
+	public ArrayList<LinkedHashMap<String,String>> getItems (TestInfo testInfo){
+		String hostid = this.getHostid(testInfo.zabbixHostIP);
+		return this.getItems(hostid);
+	}
+	public LinkedHashMap<String,ArrayList<LinkedHashMap<String,String>>> getHistory (TestInfo testInfo, String[] itemids){
+		Date startDate = testInfo.getTestDate();
+		int time_from = (int) ( startDate.getTime() / 1000L);
+		int duration = testInfo.getTestDuration();
+		int time_till = time_from + duration;
+		
+		
+		LinkedHashMap<String,ArrayList<LinkedHashMap<String,String>>> result = new LinkedHashMap<String,ArrayList<LinkedHashMap<String,String>>>();
+		
+		for (String itemid: itemids){
+			log.info("retriving history for " + itemid + " from " + time_from + " till " + time_till);
+			result.put(itemid, this.getHistory(itemid, String.valueOf(time_from), String.valueOf(time_till)));
+		}
+		
+		return result;
 	}
 	
 	private void Auth(){
@@ -75,12 +87,12 @@ public class Zabbix3{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		log.info("Token returned: " + this.authToken);
+		//log.info("Token returned: " + this.authToken);
 		this.additionalJsonContent.replace("auth", this.authToken);
 		this.client.setAdditionalJsonContent(this.additionalJsonContent);
 	}
 	
-	private String getHost(String hostname){
+	private String getHostid(String hostname){
 		String method = "host.get";
 		
 		ArrayList<String> host = new ArrayList<String>();
@@ -102,15 +114,8 @@ public class Zabbix3{
 			for (LinkedHashMap<String,String> hostId: hostIdList){
 				//log.info("hostId.getClass()" + hostId.getClass());
 				String hostid = hostId.get("hostid");
-				log.info("hostid: "+ hostid);
+				//log.info("hostid: "+ hostid);
 				return hostid;
-				/*for(Entry<String,String> entry: hostId.entrySet()){
-					entry.getValue();
-					
-					return hostid;
-				}*/
-				
-				//log.info("hostIdList.toString()" + hostIdList.toString());
 			}
 			
 		} catch (Throwable e) {
@@ -136,12 +141,6 @@ public class Zabbix3{
 		
 		try {
 			ArrayList<LinkedHashMap<String,String>> itemListArray = this.client.invoke(method, itemFilter, new ArrayList<LinkedHashMap<String,String>>().getClass());
-			/*for(LinkedHashMap<String,String>itemList : itemListArray){
-				String itemid = itemList.get("itemid");
-				String name = itemList.get("name");
-				String key_ = itemList.get("key_");
-				log.info("found itemid: " + itemid + " name: " + name + " key_: " + key_);
-			}*/
 			return itemListArray;
 			 
 			
@@ -154,15 +153,20 @@ public class Zabbix3{
 		
 	}
 	
-	private ArrayList<LinkedHashMap<String,String>> getHistory(String itemids, String time_from){
+	private ArrayList<LinkedHashMap<String,String>> getHistory(String itemids, String time_from, String time_till){
 		String method = "history.get";
 		
 		HistoryFilter historyFilter = new HistoryFilter();
 		historyFilter.itemids = itemids;
 		historyFilter.time_from = time_from;
+		historyFilter.time_till = time_till;
 		try {
 			ArrayList<LinkedHashMap<String,String>> historyListArray = this.client.invoke(method, historyFilter, new ArrayList<LinkedHashMap<String,String>>().getClass());
-
+			for (LinkedHashMap<String,String> historyList: historyListArray){
+				for (Entry<String,String> entry:  historyList.entrySet()){
+					log.info(entry.getKey() + " " + entry.getValue());
+				}
+			}
 			return historyListArray;
 			 
 			
@@ -195,15 +199,23 @@ public class Zabbix3{
 		Zabbix3 zabbix3 = new Zabbix3();
 		zabbix3.testResponse();
 		zabbix3.Auth();
-		String hostid = zabbix3.getHost("127.0.0.1");
+		ArrayList<LinkedHashMap<String,String>> historyListArray = zabbix3.getHistory("24089", "1466697600", "1466739546");
+		for(LinkedHashMap<String,String>historyList : historyListArray){
+			String clock = historyList.get("clock");
+			String value = historyList.get("value");
+			log.info("found item: " + "24089" + " clock: " + clock + " value: " + value);
+		}
+		/*
+		String hostid = zabbix3.getHostid("127.0.0.1");
 		ArrayList<LinkedHashMap<String,String>> itemListArray =  zabbix3.getItems(hostid);
 		for(LinkedHashMap<String,String>itemList : itemListArray){
 			String itemid = itemList.get("itemid");
 			String name = itemList.get("name");
 			String key_ = itemList.get("key_");
 			log.info("found itemid: " + itemid + " name: " + name + " key_: " + key_);
-			String time_from = Long.toString((System.currentTimeMillis()/1000L)-600 );
-			ArrayList<LinkedHashMap<String,String>> historyListArray = zabbix3.getHistory(itemid,  time_from);
+			String time_from = Long.toString((System.currentTimeMillis()/1000L)-6000 );
+			String time_till = Long.toString((System.currentTimeMillis()/1000L));
+			ArrayList<LinkedHashMap<String,String>> historyListArray = zabbix3.getHistory(itemid,  time_from, time_till );
 			for(LinkedHashMap<String,String>historyList : historyListArray){
 				String clock = historyList.get("clock");
 				String value = historyList.get("value");
@@ -212,7 +224,7 @@ public class Zabbix3{
 			//log.info("Length of historyListArray: " + historyListArray.size());
 			//log.info("System.currentTimeMillis()/1000L: " + time_from);
 			System.exit(0);
-		}
+		}*/
 		
 		//zabbix3.testInfo = new TestInfo();
 		//String hostname = zabbix3.testInfo.connectionInfo.hostname;

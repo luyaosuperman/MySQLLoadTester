@@ -9,7 +9,7 @@
 	<connectionInfo>
 		<username>root</username>
 		<password>Password123!</password>
-		<hostname>localhost</hostname>
+		<hostname>192.168.1.124</hostname>
 		<port>3306</port>
 		<databaseName>testreport</databaseName>
 	</connectionInfo>
@@ -19,28 +19,28 @@
 	<connectionInfo>
 		<username>root</username>
 		<password>Password123!</password>
-		<hostname>localhost</hostname>
+		<hostname>192.168.1.124</hostname>
 		<port>3306</port>
 		<databaseName>test</databaseName>
 	</connectionInfo>
-	<zabbixHostIP>192.168.1.xxx</zabbixHostIP>
+	<zabbixHostIP>192.168.1.124</zabbixHostIP>
 </TestInfo>
 
-<RESTController>
+<TestRESTController>
 	<connectionInfo>
 		<username>root</username>
 		<password>Password123!</password>
-		<hostname>localhost</hostname>
+		<hostname>192.168.1.124</hostname>
 		<port>3306</port>
 		<databaseName>testreport</databaseName>
 	</connectionInfo>
-</RESTController>
+</TestRESTController>
 
 
 <Zabbix3>
 	<username>admin</username>
 	<password>zabbix</password>
-	<url>http://192.168.1.137/zabbix/api_jsonrpc.php</url>
+	<url>http://192.168.1.125/zabbix/api_jsonrpc.php</url>
 </Zabbix3>
 
 </ApplicationConfiguration>

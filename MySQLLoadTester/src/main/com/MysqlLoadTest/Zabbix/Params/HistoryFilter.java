@@ -25,4 +25,5 @@ public class HistoryFilter {
     public String sortfield = "clock";
     public String sortorder = "ASC";
     public String time_from;
+    public String time_till;
 }

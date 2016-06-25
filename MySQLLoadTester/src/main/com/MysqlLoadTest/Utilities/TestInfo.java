@@ -54,7 +54,7 @@ public class TestInfo implements Serializable{
 	private int maxId = 1;
 	
 	@LoadFromConfig
-	public ConnectionInfo connectionInfo;
+	public static ConnectionInfo connectionInfo;
 	
 	@LoadFromConfig
 	public String zabbixHostIP;
@@ -126,9 +126,9 @@ public class TestInfo implements Serializable{
 	}
 	
 
-	public TestInfo getTestInfo(int testId)
+	public static TestInfo getTestInfo(int testId)
 	{
-		Connection connect = ConnectionManager.getConnection(this.connectionInfo);
+		Connection connect = ConnectionManager.getConnection(TestInfo.connectionInfo);
 		
 		TestInfo testInfo=null;
 	 	PreparedStatement preparedStatement = null;
@@ -137,7 +137,7 @@ public class TestInfo implements Serializable{
 			preparedStatement = connect.prepareStatement("select "
 					+ "id,timestamp,threads,runCount,rowCount,comment, "
 					+ "tableName,createTableSql,insertPct,selectPct,updatePct,initDataAmount "
-					+ "from testinfo where id = ?;");
+					+ "from testreport.testInfo where id = ?;");
 			preparedStatement.setInt(1, testId);
 			rs = preparedStatement.executeQuery();
 			if (rs.next()){
@@ -179,7 +179,29 @@ public class TestInfo implements Serializable{
         }
     }
 
-
+    public int getTestDuration(){
+    	
+    	int maxSystemNanoTime=0;
+    	Connection connect = ConnectionManager.getConnection(TestInfo.connectionInfo);
+    	
+    	PreparedStatement preparedStatement = null;
+		ResultSet rs;
+    	try {
+			preparedStatement = connect.prepareStatement("select max(systemNanoTime) as duration from testreport.testRuntimeInfo where testId = ?;");
+			preparedStatement.setInt(1, this.testId);
+			rs = preparedStatement.executeQuery();
+			if (rs.next()){
+				maxSystemNanoTime = (int) (rs.getLong("duration") / 1000000000L);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	return maxSystemNanoTime;
+    	
+    	
+    }
 
 	public long getRunCount() {		return runCount;	}
 	public void setRunCount(long runCount) {		this.runCount = runCount;	}

@@ -1,4 +1,4 @@
-use testReport;
+use testreport;
 
 drop table if exists testInfo;
 create table testInfo
