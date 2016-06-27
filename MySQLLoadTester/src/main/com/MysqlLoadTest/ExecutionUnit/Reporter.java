@@ -66,7 +66,7 @@ public class Reporter extends Thread{
 					+ "tableName, createTableSql,"
 					+ "insertPct, selectPct, updatePct,"
 					+ "initDataAmount) values "
-					+ "(now(),?,?,?,?,?,?,?,?,?,?)",
+					+ "(unix_timestamp(),?,?,?,?,?,?,?,?,?,?)",
 					//TODO
 					//marker
 					Statement.RETURN_GENERATED_KEYS);
@@ -85,7 +85,7 @@ public class Reporter extends Thread{
 			
 			
 			preparedStatement.executeUpdate();
-			testInfo.setTestDate(new Date());
+			testInfo.setTestDate( (int) (System.currentTimeMillis() / 1000L));
 			
 			ResultSet rs = preparedStatement.getGeneratedKeys();
 			if (rs.next()) {

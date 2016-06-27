@@ -4,7 +4,7 @@ drop table if exists testInfo;
 create table testInfo
 (
 	id  int unsigned auto_increment primary key,
-	timestamp  datetime not null,
+	timestamp  int not null,
 	#testType  int unsigned not null,
 	threads int unsigned not null,
 	runCount  bigint unsigned not null,

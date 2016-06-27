@@ -13,7 +13,7 @@ public class ConnectionManager {
 	
 	public static Connection getConnection(ConnectionInfo connectionInfo){
 		String connString = String.format("jdbc:mysql://%s:%s/%s?user=%s&password=%s"
-				+ "&autoReconnect=true&useSSL=false",
+				+ "&autoReconnect=true&maxReconnects=100&useSSL=false",
 				connectionInfo.hostname,connectionInfo.port,connectionInfo.databaseName,connectionInfo.username,connectionInfo.password);
 		Connection connect;
 		try {

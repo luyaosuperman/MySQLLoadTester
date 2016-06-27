@@ -32,16 +32,16 @@
     	  loadItemsTests();
       }
       
-      function drawChart(rawData) {
+      function drawChart(rawData,title,elementId) {
 
     	var data = google.visualization.arrayToDataTable(rawData);
         var options = {
-          title: 'Test Result',
+          title: title,
           curveType: 'function',
           legend: { position: 'bottom' }
         };
 
-        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+        var chart = new google.visualization.LineChart(document.getElementById(elementId));
 
         chart.draw(data, options);
       }
@@ -74,7 +74,7 @@
    	     rawData = rawData.concat(obj["TestResult"]["dataPoint"]);
    	     
    	     
-   	     drawChart(rawData);
+   	     drawChart(rawData,'Test Result','curve_chart');
    	     
    	    }
    	  };
@@ -170,7 +170,7 @@
     function createItemsForm( data, formName, formAction){
     	console.log(data[0])
 		var form = document.createElement('FORM');
-		form.name=formName;
+		form.id=formName;
 		//form.method=formMethod;
 		form.action=formAction;
 		
@@ -203,7 +203,7 @@
 	        var td = document.createElement('td');
 	        var checkbox = document.createElement('input');
 	        checkbox.type='checkbox'
-	        checkbox.name='itemid';
+	        checkbox.className='zabbixItemsCheckbox';
 	        checkbox.value=data[i]["itemid"]
 	        /*if(queryDict['testId'].indexOf(checkbox.value)!=-1){
 	        	checkbox.checked = true;
@@ -254,5 +254,62 @@
 		};
 		xhttp.open("GET", "/get_zabbix_items?testId="+testId, true);
 		xhttp.send();
+    }
+    
+    
+    function loadZabbixHistory(){
+    	var input = document.getElementsByClassName("zabbixItemsCheckbox")
+    	//console.log(input);
+    	var itemids = new Array();
+    	var itemidsGetParam = ""
+		for (var i = 0; i < input.length; i++) {
+			if (input[i].checked){
+				//console.log( "fetching: " + input[i].value );
+				itemids.push(input[i].value)
+				itemidsGetParam += "&itemids=" + input[i].value
+			}
+		}
+		//console.log(itemids);
+		//console.log(itemidsGetParam);
+		
+		var testIdArray = queryDict["testId"];
+    	var testId = testIdArray[0];
+    	
+    	var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function() {
+			if (xhttp.readyState == 4 && xhttp.status == 200) {
+				var obj = JSON.parse(xhttp.responseText);
+				//Object.keys(obj.LinkedHashMap).forEach()
+				//Object.keys(obj.LinkedHashMap)
+				//obj.LinkedHashMap["23708"][0]["clock"]
+				//obj.LinkedHashMap["23708"][0]["value"]
+				
+				//console.log(obj)
+				//clear div
+				var parentDiv = document.getElementById("zabbix_chart")
+				parentDiv.innerHTML = ""
+				Object.keys(obj.LinkedHashMap).forEach(function(itemid){
+					//prepare data array
+					var rawData = [['clock', 'value'],]
+					obj.LinkedHashMap[itemid].forEach(function(point){
+						//fill data array
+						var clock = point["clock"]
+						var value = point["value"]
+						rawData.push([parseInt(clock),parseFloat(value)])
+					})
+					console.log(rawData)
+					//add graph
+					var div = document.createElement('div');
+					div.id = itemid
+					parentDiv.appendChild(div)
+					drawChart(rawData,itemid,itemid)
+				})
+
+			}
+		};
+		xhttp.open("GET", "/get_zabbix_history?testId="+testId+itemidsGetParam, true);
+		xhttp.send();
+		
+		
     }
       

@@ -23,7 +23,7 @@ public class TestInfo implements Serializable{
 	private String comment;
 	
 	private int testId = -1;
-	private Date testDate;
+	private int testDate;
 	
 	/////////////////////////////////////////
 	//Extended Info
@@ -143,7 +143,7 @@ public class TestInfo implements Serializable{
 			if (rs.next()){
 				assert testId == rs.getInt("id");
 				//int testType = rs.getInt("testType");
-				Date testDate = rs.getDate("timestamp");
+				int testDate = rs.getInt("timestamp");
 				int threads = rs.getInt("threads");
 				long runCount = rs.getLong("runCount");
 				long rowCount = rs.getLong("rowCount");
@@ -213,8 +213,8 @@ public class TestInfo implements Serializable{
 	public void setTestId(int testId) {		this.testId = testId;	}
 	public String getComment() {		return comment;	}
 	public void setComment(String comment) {		this.comment = comment;	}
-	public Date getTestDate() {		return testDate;	}
-	public void setTestDate(Date testDate) {		this.testDate = testDate;	}
+	public int getTestDate() {		return testDate;	}
+	public void setTestDate(int testDate) {		this.testDate = testDate;	}
 	public String getCreateTableSQL() {		return createTableSQL;	}
 	public void setCreateTableSQL(String createTableSQL) {		this.createTableSQL = createTableSQL;	}
 	public String getTableName() {		return tableName;	}

@@ -55,11 +55,12 @@ public class Zabbix3{
 	
 	public ArrayList<LinkedHashMap<String,String>> getItems (TestInfo testInfo){
 		String hostid = this.getHostid(testInfo.zabbixHostIP);
+		//log.info("hostid: " + hostid);
+		//assert hostid != "null";
 		return this.getItems(hostid);
 	}
 	public LinkedHashMap<String,ArrayList<LinkedHashMap<String,String>>> getHistory (TestInfo testInfo, String[] itemids){
-		Date startDate = testInfo.getTestDate();
-		int time_from = (int) ( startDate.getTime() / 1000L);
+		int time_from = testInfo.getTestDate();
 		int duration = testInfo.getTestDuration();
 		int time_till = time_from + duration;
 		
@@ -67,7 +68,7 @@ public class Zabbix3{
 		LinkedHashMap<String,ArrayList<LinkedHashMap<String,String>>> result = new LinkedHashMap<String,ArrayList<LinkedHashMap<String,String>>>();
 		
 		for (String itemid: itemids){
-			log.info("retriving history for " + itemid + " from " + time_from + " till " + time_till);
+			//log.info("retriving history for " + itemid + " from " + time_from + " till " + time_till);
 			result.put(itemid, this.getHistory(itemid, String.valueOf(time_from), String.valueOf(time_till)));
 		}
 		
@@ -164,7 +165,7 @@ public class Zabbix3{
 			ArrayList<LinkedHashMap<String,String>> historyListArray = this.client.invoke(method, historyFilter, new ArrayList<LinkedHashMap<String,String>>().getClass());
 			for (LinkedHashMap<String,String> historyList: historyListArray){
 				for (Entry<String,String> entry:  historyList.entrySet()){
-					log.info(entry.getKey() + " " + entry.getValue());
+					//log.info(entry.getKey() + " " + entry.getValue());
 				}
 			}
 			return historyListArray;
@@ -199,7 +200,7 @@ public class Zabbix3{
 		Zabbix3 zabbix3 = new Zabbix3();
 		zabbix3.testResponse();
 		zabbix3.Auth();
-		ArrayList<LinkedHashMap<String,String>> historyListArray = zabbix3.getHistory("24089", "1466697600", "1466739546");
+		ArrayList<LinkedHashMap<String,String>> historyListArray = zabbix3.getHistory("23712", "1466870400", "1466871869");
 		for(LinkedHashMap<String,String>historyList : historyListArray){
 			String clock = historyList.get("clock");
 			String value = historyList.get("value");
