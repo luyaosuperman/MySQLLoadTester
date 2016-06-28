@@ -40,7 +40,7 @@
 <Zabbix3>
 	<username>admin</username>
 	<password>zabbix</password>
-	<url>http://localhost/zabbix/api_jsonrpc.php</url>
+	<url>http://localhost_nah/zabbix/api_jsonrpc.php</url>
 </Zabbix3>
 
 </ApplicationConfiguration>

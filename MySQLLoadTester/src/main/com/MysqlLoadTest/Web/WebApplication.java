@@ -9,6 +9,8 @@ import org.springframework.context.annotation.ImportResource;
 public class WebApplication {
 
     public static void main(String[] args) {
+    	
+    	System.out.println("java.class.path: " + System.getProperty("java.class.path"));
         SpringApplication.run(WebApplication.class, args);
     }
 	

@@ -15,7 +15,7 @@ public class Application {
 		//int testType = 1;
 		int totalThreads = 50;
 		int runCount = 30000;
-		int rowCount = 30000;
+		int rowCount = 3000000;
 		
 		String tableName = "testLt";
 		String createTableSql = "create table testLt (" +
@@ -35,7 +35,11 @@ public class Application {
 								"col12 char(255) not null, " + 
 								"col13 char(255) not null, " + 
 								"col14 char(255) not null, " + 
-								"col99 char(255) not null)";
+								"col99 char(255) not null) "
+								//+ "engine=myisam";
+								+ "engine=innodb "
+								//+ "ROW_FORMAT=COMPRESSED "
+								;
 		/*int insertPct = 100;
 		int selectPct = 0;
 		int updatePct = 0;*/

@@ -22,6 +22,7 @@ import com.MysqlLoadTest.Utilities.ConnectionManager;
 import com.MysqlLoadTest.Utilities.LoadFromConfig;
 import com.MysqlLoadTest.Utilities.TestInfo;
 import com.MysqlLoadTest.Utilities.Tuple;
+import com.MysqlLoadTest.Utilities.XORShiftRandom;
 
 public class Runner extends Thread {
 //public class Runner implements Runnable  {
@@ -62,7 +63,8 @@ public class Runner extends Thread {
 	private boolean finished = false;
 	private long previousReportDateNS = 0;
 	
-	private Random rand = new Random();
+	//private Random rand = new Random();
+	private XORShiftRandom rand = new XORShiftRandom();
 	
 	//private ObjectOutputStream outputPipe;
 	private ConcurrentLinkedDeque<RunnerMessage> queue;
