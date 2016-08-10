@@ -5,6 +5,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.validation.Valid;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,13 +17,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import com.MysqlLoadTest.ExecutionUnit.TestController;
-import com.MysqlLoadTest.SocketController.SocketSender;
+import com.MysqlLoadTest.ExecutionUnit.Singleton.TestController;
+//import com.MysqlLoadTest.SocketController.SocketSender;
 import com.MysqlLoadTest.Utilities.TestInfo;
-import com.MysqlLoadTest.Utilities.TestInfoClient;
+import com.MysqlLoadTest.ZabbixIntegration.Zabbix3;
 
 @Controller
 public class TestMVCController  extends WebMvcConfigurerAdapter {
+	
+	private static Logger log = LogManager.getLogger(TestMVCController.class); 
 	
 	private TestController testController;
 	private TestInfo testInfo;
@@ -49,7 +53,9 @@ public class TestMVCController  extends WebMvcConfigurerAdapter {
     }
     
     @RequestMapping(value="/", method=RequestMethod.GET)
-    public String landing( TestInfoClient testInfoClient) {
+    public String landing( TestInfo testInfoFromClient) {
+    	
+    	//it binds again!!!
     	//if (WebBridge.controller.testStatus() != TestController.RUNNING){
     	if (testController.testStatus() != TestController.RUNNING){
     		return "landing";
@@ -60,16 +66,17 @@ public class TestMVCController  extends WebMvcConfigurerAdapter {
     }
     
     @RequestMapping(value="/",method=RequestMethod.POST)
-    public String start_test(@Valid TestInfoClient testInfoClient, BindingResult bindingResult){
+    public String start_test(@Valid TestInfo testInfoFromClient, BindingResult bindingResult){
     	
     	if (bindingResult.hasErrors()){
     		return "landing";
     	}
     	
-    	//int testId = SocketSender.sendFromSocket(testInfoClient);
-    	//WebBridge.testInfo = new  TestInfo(testInfoClient);
-    	this.testInfo.setTestInfoClient(testInfoClient);
-    	//WebBridge.controller.startTest(WebBridge.testInfo);
+    	log.info(this.testInfo);
+    	log.info(testInfoFromClient);
+    	this.testInfo = testInfoFromClient;
+    	log.info(this.testInfo);
+    	
     	testController.startTest(this.testInfo);
     	
     	return "redirect:/test_progress";

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.MysqlLoadTest.ExecutionUnit.TestController;
+import com.MysqlLoadTest.ExecutionUnit.Singleton.TestController;
 import com.MysqlLoadTest.ObjectLibrary.TestList;
 import com.MysqlLoadTest.ObjectLibrary.TestProgress;
 import com.MysqlLoadTest.ObjectLibrary.TestResult;
@@ -34,7 +34,7 @@ public class TestRESTController {
 	
 	
 	private TestController testController;
-	private TestInfo testInfo;
+	//private TestInfo testInfo;
 	
 	@Autowired
     public void setTestController(TestController testController) {
@@ -42,10 +42,10 @@ public class TestRESTController {
         //this.testController.start();
     }
 	
-	@Autowired
+	/*@Autowired
     public void setTestInfo(TestInfo testInfo) {
-        this.testInfo = testInfo;
-    }
+        this.testController.testInfo = testInfo;
+    }*/
 	
 	public TestRESTController(){
 		ConfigLoader.loadFromConfig(this);
@@ -54,7 +54,7 @@ public class TestRESTController {
     @RequestMapping(value="/get_progress",method=RequestMethod.GET)
     public TestInfo get_progress(){
     	//return WebBridge.testInfo;
-    	return this.testInfo;
+    	return this.testController.testInfo;
     }
     
     @RequestMapping(value="/get_testList",method=RequestMethod.GET)

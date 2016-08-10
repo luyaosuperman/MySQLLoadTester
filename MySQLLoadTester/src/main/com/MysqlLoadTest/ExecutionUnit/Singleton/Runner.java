@@ -1,4 +1,4 @@
-package com.MysqlLoadTest.ExecutionUnit;
+package com.MysqlLoadTest.ExecutionUnit.Singleton;
 
 import java.util.Random;
 import java.sql.Array;
@@ -221,7 +221,8 @@ public class Runner extends Thread {
 		try {
 			this.selectStatement.clearParameters();
 			this.selectStatement.setInt(1, this.getRandomId());
-			this.selectStatement.executeQuery();
+			//this.selectStatement.executeQuery();
+			this.selectStatement.execute();
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -245,7 +246,8 @@ public class Runner extends Thread {
 				indent ++;
 			}
 			this.updateStatement.setInt(indent,getRandomId());
-			this.updateStatement.executeUpdate();
+			//this.updateStatement.executeUpdate();
+			this.updateStatement.execute();
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -260,7 +262,7 @@ public class Runner extends Thread {
 		if (this.insertPct > 0){//with insert
 			return this.testInfo.getMaxId() < this.rowCount;
 		}else{//with no insert
-			return this.runCount < this.totalRunCount;
+			return this.totalRunCount < this.runCount;
 		}
 	}
 	

@@ -1,4 +1,4 @@
-package com.MysqlLoadTest.ExecutionUnit;
+package com.MysqlLoadTest.ExecutionUnit.Singleton;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,7 +13,7 @@ public class Application {
 	
 	public static void main(String[] args) {
 		//int testType = 1;
-		int totalThreads = 50;
+		int totalThreads = 40;
 		int runCount = 30000;
 		int rowCount = 3000000;
 		
@@ -35,6 +35,21 @@ public class Application {
 								"col12 char(255) not null, " + 
 								"col13 char(255) not null, " + 
 								"col14 char(255) not null, " + 
+								"col15 char(255) not null, " +
+								"col16 char(255) not null, " + 
+								"col17 char(255) not null, " + 
+								"col18 char(255) not null, " + 
+								"col19 char(255) not null, " + 
+								"col20 char(255) not null, " +
+								"col21 char(255) not null, " + 
+								"col22 char(255) not null, " + 
+								"col23 char(255) not null, " + 
+								"col24 char(255) not null, " + 
+								"col25 char(255) not null, " +
+								"col26 char(255) not null, " + 
+								"col27 char(255) not null, " + 
+								"col28 char(255) not null, " + 
+								"col29 char(255) not null, " + 
 								"col99 char(255) not null) "
 								//+ "engine=myisam";
 								+ "engine=innodb "
@@ -44,9 +59,9 @@ public class Application {
 		int selectPct = 0;
 		int updatePct = 0;*/
 		
-		int insertPct = 10;
-		int selectPct = 30;
-		int updatePct = 60;
+		int insertPct = 100;
+		int selectPct = 0;
+		int updatePct = 0;
 		
 		
 		int initDataAmount = 10000;

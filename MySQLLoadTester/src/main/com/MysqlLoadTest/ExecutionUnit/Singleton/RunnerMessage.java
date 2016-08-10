@@ -1,4 +1,4 @@
-package com.MysqlLoadTest.ExecutionUnit; 
+package com.MysqlLoadTest.ExecutionUnit.Singleton; 
 
 import java.util.Date;
 

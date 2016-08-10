@@ -31,6 +31,7 @@ public class ConfigLoader {
 		
 		try {
 			String item = config.getString(text);
+			//log.info("Set Field: " + field.getName() + " with value: " + item);
 			switch ( field.getType().getSimpleName()){
 			case "int":
 				field.set(o, Integer.parseInt(item));

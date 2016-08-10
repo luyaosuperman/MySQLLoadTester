@@ -17,10 +17,10 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 public class TestInfo implements Serializable{
 
 	//private int testType; //1: Insert
-	private long runCount; //total run count, not per thread.
-	private long rowCount;
-	private int totalThreads;
-	private String comment;
+	@LoadFromConfig private long runCount; //total run count, not per thread.
+	@LoadFromConfig private long rowCount;
+	@LoadFromConfig private int totalThreads;
+	@LoadFromConfig private String comment;
 	
 	private int testId = -1;
 	private int testDate;
@@ -33,15 +33,16 @@ public class TestInfo implements Serializable{
 	//select/insert/update percentage
 	//init data amount -> How to achieve fast?
 	
-	private String tableName = null;
-	private String createTableSQL = null;
-	private int insertPct=0;
-	private int selectPct=0;
-	private int updatePct=0;
+	@LoadFromConfig private String tableName;
+	@LoadFromConfig private String createTableSQL;
+	@LoadFromConfig private int insertPct;
+	@LoadFromConfig private int selectPct;
+	@LoadFromConfig private int updatePct;
 	
-	private long initDataAmount = 0;
+	@LoadFromConfig private long initDataAmount = 0;
 	
-	///////////////
+	///////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////
 	//Test status
 	public static final int PENDING = -1;
 	public static final int PREPARING = 0;
@@ -53,11 +54,9 @@ public class TestInfo implements Serializable{
 	
 	private int maxId = 1;
 	
-	@LoadFromConfig
-	public static ConnectionInfo connectionInfo;
+	@LoadFromConfig	public static ConnectionInfo connectionInfo;
 	
-	@LoadFromConfig
-	public String zabbixHostIP;
+	@LoadFromConfig	public String zabbixHostIP;
 	
 	//private HashMap tableColMap;
 	public LinkedHashMap<String,Tuple<String,Integer>> tableColMap = new LinkedHashMap<String,Tuple<String,Integer>>();
@@ -91,7 +90,7 @@ public class TestInfo implements Serializable{
 		ConfigLoader.loadFromConfig(this);
 		
 	}
-	public TestInfo(TestInfoClient testInfoClient){
+	/*public TestInfo(TestInfoClient testInfoClient){
 		this.setTestInfoClient( testInfoClient);
 		ConfigLoader.loadFromConfig(this);
 	}
@@ -108,23 +107,22 @@ public class TestInfo implements Serializable{
 		this.setSelectPct(testInfoClient.getSelectPct());
 		this.setUpdatePct(testInfoClient.getUpdatePct());
 		this.setInitDataAmount(testInfoClient.getInitDataAmount());
-		/*for(Field sourceField: TestInfoClient.class.getDeclaredFields()){
-			try {
-				Field targetField = TestInfo.class.getDeclaredField(sourceField.getName());
-				sourceField.setAccessible(true);
-				//Class<?> theClass = Class.forName(sourceField.getType().getName());
-				//targetField.set(testInfoClient, theClass.cast(sourceField.get(testInfoClient)));
-				
-			} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException | ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				System.exit(1);
-			}
-			
-		}*/
+		//for(Field sourceField: TestInfoClient.class.getDeclaredFields()){
+		//	try {
+		//		Field targetField = TestInfo.class.getDeclaredField(sourceField.getName());
+		//		sourceField.setAccessible(true);
+		//		//Class<?> theClass = Class.forName(sourceField.getType().getName());
+		//		//targetField.set(testInfoClient, theClass.cast(sourceField.get(testInfoClient)));
+		//		
+		//	} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException | ClassNotFoundException e) {
+		//		// TODO Auto-generated catch block
+		//		e.printStackTrace();
+		//		System.exit(1);
+		//	}
+		//	
+		//}
 		
-	}
-	
+	}*/
 
 	public static TestInfo getTestInfo(int testId)
 	{

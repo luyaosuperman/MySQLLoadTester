@@ -1,4 +1,4 @@
-package com.MysqlLoadTest.ExecutionUnit;
+package com.MysqlLoadTest.ExecutionUnit.Singleton;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -25,7 +25,7 @@ public class TestController extends Thread{
 	private Connection connect;
 	//private int threadID;
 	
-	private TestInfo testInfo;
+	public TestInfo testInfo;
 	//private TestInfo testInfoPrepare;
 	
 	private int controllerStatus = this.NOTRUNNING;
@@ -89,6 +89,7 @@ public class TestController extends Thread{
 		try {
 			Statement statement = this.connect.createStatement();
 			statement.execute("drop table if exists " + this.testInfo.getTableName());
+			log.info("this.testInfo.getCreateTableSQL(): " + this.testInfo.getCreateTableSQL());
 			statement.execute(this.testInfo.getCreateTableSQL());
 			//statement.execute("create table if not exists tbl1(a int auto_increment primary key, b int)");
 			log.info("table recreated");

@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean id="testController" class="com.MysqlLoadTest.ExecutionUnit.TestController" />
+	<bean id="testController" class="com.MysqlLoadTest.ExecutionUnit.Singleton.TestController" />
 	<bean id="testInfo"       class="com.MysqlLoadTest.Utilities.TestInfo" />
 	<bean id="zabbix3" class="com.MysqlLoadTest.ZabbixIntegration.Zabbix3" >
 	</bean>
