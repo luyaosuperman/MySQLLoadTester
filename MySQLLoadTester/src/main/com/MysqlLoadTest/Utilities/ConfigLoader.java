@@ -20,6 +20,7 @@ public class ConfigLoader {
 
 			try {
 				config = new XMLConfiguration("config.xml");
+				//config.setRootElementName("ApplicationConfiguration");
 				config.setThrowExceptionOnMissing(true);
 			} catch (ConfigurationException e) {
 				// TODO Auto-generated catch block

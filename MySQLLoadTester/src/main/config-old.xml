@@ -2,22 +2,9 @@
 <ApplicationConfiguration>
 
 <HTestConfig>
-	<userCountStart>1000</userCountStart>
-	<userCountStop>1000000</userCountStop>
-	<userRecordPerUser>10</userRecordPerUser>
-	<threadsCount>2</threadsCount>
-	<insertPct>100</insertPct>
-	<selectPct>0</selectPct>
-	<deletePct>0</deletePct>
-	<updatePct>0</updatePct>
-	
-	<usernameLength>255</usernameLength>
-	<userDataLength>255</userDataLength>
-	<testComment>test</testComment>
-	
-	
+	<userCountStart>10</userCountStart>
 </HTestConfig>
-
+<!--
 <Runner>
 	<reportInterval>100</reportInterval>
 </Runner>
@@ -74,4 +61,5 @@
 	<password>zabbix</password>
 	<url>http://localhost/zabbix/api_jsonrpc.php</url>
 </Zabbix3>
+-->
 </ApplicationConfiguration>

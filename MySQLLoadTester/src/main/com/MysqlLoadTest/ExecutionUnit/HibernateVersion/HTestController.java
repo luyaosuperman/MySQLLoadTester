@@ -6,7 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.MysqlLoadTest.Interfaces.TestConfig;
-import com.MysqlLoadTest.Interfaces.Teststatus;
+import com.MysqlLoadTest.Interfaces.TestStatus;
 
 public class HTestController extends Thread implements TestController {
 	
@@ -14,18 +14,26 @@ public class HTestController extends Thread implements TestController {
 
 	
 	private HRunner[] hRunnerArray = null;
-	private int testIdentifier;
-	private TestConfig hTestConfig = new HTestConfig();
+	private HTestConfig hTestConfig = null;
+	private HTestStatus hTestStatus = null;
 	
 	HTestController(){
 		this.start();
+		this.hTestConfig = new HTestConfig();
+		this.hTestStatus = new HTestStatus();
+		
 	}
 	
 	@Override
 	public TestConfig getConfigObject() {
-		// TODO Auto-generated method stub
-		return hTestConfig;
+		return this.hTestConfig;
 	}
+	
+	@Override
+	public TestStatus getTestStatus() {
+		return this.hTestStatus;
+	}
+
 
 	@Override
 	public void startTest() {
@@ -34,27 +42,36 @@ public class HTestController extends Thread implements TestController {
 			log.fatal("test started before config set");
 			System.exit(1);
 		}
+		
+		this.hRunnerArray = new HRunner[this.hTestConfig.threadsCount];
+		for (int i=0;i<this.hTestConfig.threadsCount;i++){
+			this.hRunnerArray[i]=new HRunner(this.hTestConfig);
+		}
+		
 		this.prepareTest();
+		this.runTest();
 		
 	}
 
 	@Override
 	public void cancelTest() {
 		// TODO Auto-generated method stub
-		
+		for (HRunner hRunner: hRunnerArray){
+			log.fatal("Cancel test not implemented yet");
+			System.exit(1);
+		}
 	}
 
-	@Override
-	public Teststatus getTestStatus() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	private void prepareTest() {
-		
+		for (HRunner hRunner: hRunnerArray){
+			hRunner.prepare();
+		}
 	}
 	private void runTest(){
-		
+		for (HRunner hRunner: hRunnerArray){
+			hRunner.runTest();
+		}
 	}
 
 	@Override
