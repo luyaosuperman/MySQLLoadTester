@@ -16,7 +16,15 @@ public class HTester {
 
 	public static void main(String[] args){
 		
-		TestController testController = new HTestController();
+		//TestController testController = new HTestController();
+		//TestController testController = new HTestController();
+		TestController testController = null;
+		try {
+			testController = (TestController) Class.forName("com.MysqlLoadTest.ExecutionUnit.HibernateVersion.HTestController").newInstance();
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		TestConfig testConfig = testController.getConfigObject();
 		Map<String,Object> configList = testConfig.getConfigItems();
 		for(String key: configList.keySet()){

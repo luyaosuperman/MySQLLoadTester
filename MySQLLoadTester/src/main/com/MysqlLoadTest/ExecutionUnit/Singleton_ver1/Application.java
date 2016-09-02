@@ -1,4 +1,4 @@
-package com.MysqlLoadTest.ExecutionUnit.Singleton;
+package com.MysqlLoadTest.ExecutionUnit.Singleton_ver1;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

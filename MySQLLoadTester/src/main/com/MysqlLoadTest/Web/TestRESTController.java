@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.MysqlLoadTest.ExecutionUnit.Singleton.TestController;
+import com.MysqlLoadTest.ExecutionUnit.Singleton_ver1.TestController;
 import com.MysqlLoadTest.ObjectLibrary.TestList;
 import com.MysqlLoadTest.ObjectLibrary.TestProgress;
 import com.MysqlLoadTest.ObjectLibrary.TestResult;

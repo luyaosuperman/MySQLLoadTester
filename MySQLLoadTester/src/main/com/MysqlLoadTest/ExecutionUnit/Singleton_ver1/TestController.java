@@ -1,4 +1,4 @@
-package com.MysqlLoadTest.ExecutionUnit.Singleton;
+package com.MysqlLoadTest.ExecutionUnit.Singleton_ver1;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

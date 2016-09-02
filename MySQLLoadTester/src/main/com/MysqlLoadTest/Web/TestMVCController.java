@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import com.MysqlLoadTest.ExecutionUnit.Singleton.TestController;
+import com.MysqlLoadTest.ExecutionUnit.Singleton_ver1.TestController;
 //import com.MysqlLoadTest.SocketController.SocketSender;
 import com.MysqlLoadTest.Utilities.TestInfo;
 import com.MysqlLoadTest.ZabbixIntegration.Zabbix3;

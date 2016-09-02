@@ -7,7 +7,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.MysqlLoadTest.ExecutionUnit.Singleton.PipeManager;
+import com.MysqlLoadTest.ExecutionUnit.Singleton_ver1.PipeManager;
 import com.MysqlLoadTest.Interfaces.ConfigurableItem;
 import com.MysqlLoadTest.Interfaces.TestConfig;
 import com.MysqlLoadTest.Utilities.ConfigLoader;
