@@ -5,7 +5,7 @@
 	<userCountStart>1000</userCountStart>
 	<userCountStop>1000000</userCountStop>
 	<userRecordPerUser>10</userRecordPerUser>
-	<threadsCount>2</threadsCount>
+	<threadsCount>4</threadsCount>
 	<insertPct>100</insertPct>
 	<selectPct>0</selectPct>
 	<deletePct>0</deletePct>
@@ -45,12 +45,12 @@
 	
 	<runCount>30000000</runCount>
 	<rowCount>3000000</rowCount>
-	<totalThreads>40</totalThreads>
+	<totalThreads>15</totalThreads>
 	<comment></comment>
 	<tableName>testLt</tableName>
 	<createTableSQL>create table testLt (id bigint unsigned auto_increment primary key\,runnerId int unsigned not null\,col1 int unsigned not null\,col2 bigint unsigned not null\,col3 char(255) not null\,col4 char(255) not null\,col5 char(255) not null\,col6 char(255) not null\,col7 char(255) not null\,col8 char(255) not null\,col9 char(255) not null\,col10 char(255) not null\,col11 char(255) not null\,col12 char(255) not null\,col13 char(255) not null\,col14 char(255) not null\,col15 char(255) not null\,col16 char(255) not null\,col17 char(255) not null\,col18 char(255) not null\,col19 char(255) not null\,col20 char(255) not null\,col21 char(255) not null\,col22 char(255) not null\,col23 char(255) not null\,col24 char(255) not null\,col25 char(255) not null\,col26 char(255) not null\,col27 char(255) not null\,col28 char(255) not null\,col29 char(255) not null\,col99 char(255) not null)engine=innodb</createTableSQL>
-	<insertPct>0</insertPct>
-	<selectPct>100</selectPct>
+	<insertPct>100</insertPct>
+	<selectPct>0</selectPct>
 	<updatePct>0</updatePct>
 	<initDataAmount>30000</initDataAmount>
 	

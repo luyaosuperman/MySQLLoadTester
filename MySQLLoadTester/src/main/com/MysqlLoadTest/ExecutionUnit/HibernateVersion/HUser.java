@@ -16,10 +16,21 @@ public class HUser {
 	@GeneratedValue(strategy=GenerationType.IDENTITY) 
 	@Column(name = "HUSER_ID")
 	private long id;
-	@GeneratedData(stringLength=10) private String username;
+	
+	@GeneratedData(stringLength=100) private String username;
+	@GeneratedData(stringLength=100) private String userdata1;
+	@GeneratedData(stringLength=100) private String userdata2;
+	@GeneratedData(stringLength=100) private String userdata3;
+	@GeneratedData(stringLength=100) private String userdata4;
+	@GeneratedData(stringLength=100) private String userdata5;
+	@GeneratedData(stringLength=100) private String userdata6;
+	@GeneratedData(stringLength=100) private String userdata7;
+	@GeneratedData(stringLength=100) private String userdata8;
+	@GeneratedData(stringLength=100) private String userdata9;
+	@GeneratedData(stringLength=100) private String userdata10;
 
 	HUser(){
-		System.out.println("HUser init");
+		//System.out.println("HUser init");
 		GenerateData.generateData(this);
 	}
 	

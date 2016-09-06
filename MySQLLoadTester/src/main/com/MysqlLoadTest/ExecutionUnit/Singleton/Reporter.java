@@ -221,7 +221,13 @@ public class Reporter extends Thread{
 				if (this.previousReportTimeNS == 0){ this.previousReportTimeNS = System.nanoTime() - this.referenceNanoSecond;}
 			}
 			else{
-				this.pause(100);
+				//this.pause(100);
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 
 			this.summaryReport();

@@ -33,7 +33,7 @@ http://xmlns.jcp.org/xml/ns/persistence_2_1.xsd"> -->
             <property name="dialect" value="org.hibernate.dialect.MySQLDialect" />
 
             <property name="hibernate.show_sql" value="false" />
-            <property name="hibernate.hbm2ddl.auto" value="create" />
+            <property name="hibernate.hbm2ddl.auto" value="create-drop" />
         </properties>
     </persistence-unit>
 </persistence>

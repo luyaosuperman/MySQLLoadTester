@@ -1,3 +1,4 @@
+
 package com.MysqlLoadTest.ExecutionUnit.Singleton;
 
 import java.sql.Connection;
@@ -58,7 +59,7 @@ public class MaxIdCatcher extends Thread{
 	public void run(){
 		while (this.stop != true){ 
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(10000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

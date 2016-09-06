@@ -16,7 +16,7 @@ public class GenerateData {
 	public static void generateData(Object o){
 		for (Field f: o.getClass().getDeclaredFields()){
 			if(f.getAnnotation(GeneratedData.class) != null){
-				log.info("Generating for " + o.getClass().getSimpleName()+"."+f.getName());
+				//log.info("Generating for " + o.getClass().getSimpleName()+"."+f.getName());
 				f.setAccessible(true);
 				GeneratedData generatedData = f.getAnnotation(GeneratedData.class);
 				switch (f.getType().getSimpleName()){

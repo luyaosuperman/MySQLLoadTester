@@ -24,7 +24,7 @@ public class HRunner extends Thread{
 	
 	static{
 		emf = Persistence.createEntityManagerFactory("HelloWorldPU");
-		EntityManager em = emf.createEntityManager();
+		/*EntityManager em = emf.createEntityManager();
 		EntityTransaction ex = em.getTransaction();
 		ex.begin();
 		String[] stringQuerys = {"DELETE FROM HUserRecord","DELETE FROM HUser"};
@@ -32,7 +32,7 @@ public class HRunner extends Thread{
 			Query query = em.createQuery(stringQuery);
 			query.executeUpdate();
 		}
-		ex.commit();
+		ex.commit();*/
 		
 	}
 	
@@ -61,15 +61,17 @@ public class HRunner extends Thread{
 	
 	private void insert(){
 		
-		log.info(this.threadId + " Insert");
+		//log.info(this.threadId + " Insert");
 		
 		this.ex = this.em.getTransaction();
 		this.ex.begin();
 		HUser hUser = new HUser();
-		HUserRecord hUserRecord = new HUserRecord(); 
-		hUserRecord.sethUser(hUser);
 		this.em.persist(hUser);
-		this.em.persist(hUserRecord);
+		for (int i=0;i< this.hTestConfig.userRecordPerUser;i++){
+			HUserRecord hUserRecord = new HUserRecord(); 
+			hUserRecord.sethUser(hUser);
+			this.em.persist(hUserRecord);
+		}
 		this.ex.commit();
 		
 	}

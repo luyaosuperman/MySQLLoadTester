@@ -23,7 +23,18 @@ public class HUserRecord {
 	@Column(name = "HUSER_RECORD")
 	private int id;
 	private HUser hUser;
-	@GeneratedData(stringLength=20) private String userData;
+	
+	@GeneratedData(stringLength=200) private String userData0;
+	@GeneratedData(stringLength=200) private String userData1;
+	@GeneratedData(stringLength=200) private String userData2;
+	@GeneratedData(stringLength=200) private String userData3;
+	@GeneratedData(stringLength=200) private String userData4;
+	@GeneratedData(stringLength=200) private String userData5;
+	@GeneratedData(stringLength=200) private String userData6;
+	@GeneratedData(stringLength=200) private String userData7;
+	@GeneratedData(stringLength=200) private String userData8;
+	@GeneratedData(stringLength=200) private String userData9;
+	
 	
 	HUserRecord(){ GenerateData.generateData(this);	}
 	
