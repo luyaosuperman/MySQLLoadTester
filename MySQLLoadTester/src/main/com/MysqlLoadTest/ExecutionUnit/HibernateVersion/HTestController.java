@@ -67,6 +67,20 @@ public class HTestController extends Thread implements TestController {
 		for (HRunner hRunner: hRunnerArray){
 			hRunner.prepare();
 		}
+		
+		while(true){
+			int preparedCount = 0;
+			for (HRunner hRunner: hRunnerArray){
+				if (hRunner.prepared()){
+					preparedCount ++;
+				}
+				if (preparedCount == hRunnerArray.length){
+					log.info("all runners prepared");
+					return;
+				}
+			}
+		}
+		
 	}
 	private void runTest(){
 		for (HRunner hRunner: hRunnerArray){

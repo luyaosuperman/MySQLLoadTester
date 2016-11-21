@@ -27,7 +27,7 @@ http://xmlns.jcp.org/xml/ns/persistence_2_1.xsd"> -->
             
             
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
-            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/hibernateplayground?serverTimezone=UTC" />
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://test1.cquwj4tlhao5.ap-southeast-2.rds.amazonaws.com/hibernateplayground?serverTimezone=UTC&amp;createDatabaseIfNotExist=true" />
             <property name="javax.persistence.jdbc.user" value="root" />
             <property name="javax.persistence.jdbc.password" value="Password123!" />
             <property name="dialect" value="org.hibernate.dialect.MySQLDialect" />

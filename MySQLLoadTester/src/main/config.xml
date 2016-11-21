@@ -3,7 +3,7 @@
 
 <HTestConfig>
 	<userCountStart>1000</userCountStart>
-	<userCountStop>1000000</userCountStop>
+	<userCountStop>10000</userCountStop>
 	<userRecordPerUser>10</userRecordPerUser>
 	<threadsCount>4</threadsCount>
 	<insertPct>100</insertPct>
@@ -27,7 +27,7 @@
 	<connectionInfo>
 		<username>root</username>
 		<password>Password123!</password>
-		<hostname>localhost</hostname>
+		<hostname>multiaz1renamed.cquwj4tlhao5.ap-southeast-2.rds.amazonaws.com</hostname>
 		<port>3306</port>
 		<databaseName>testreport</databaseName>
 	</connectionInfo>
@@ -37,7 +37,7 @@
 	<connectionInfo>
 		<username>root</username>
 		<password>Password123!</password>
-		<hostname>localhost</hostname>
+		<hostname>multiaz1renamed.cquwj4tlhao5.ap-southeast-2.rds.amazonaws.com</hostname>
 		<port>3306</port>
 		<databaseName>test</databaseName>
 	</connectionInfo>
@@ -60,7 +60,7 @@
 	<connectionInfo>
 		<username>root</username>
 		<password>Password123!</password>
-		<hostname>localhost</hostname>
+		<hostname>multiaz1renamed.cquwj4tlhao5.ap-southeast-2.rds.amazonaws.com</hostname>
 		<port>3306</port>
 		<databaseName>testreport</databaseName>
 	</connectionInfo>

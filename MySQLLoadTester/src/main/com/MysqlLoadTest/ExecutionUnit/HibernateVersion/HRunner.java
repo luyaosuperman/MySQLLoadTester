@@ -18,6 +18,16 @@ public class HRunner extends Thread{
 	
 	HTestConfig hTestConfig = null;
 	
+	final static int INITED = 1;
+	final static int PREPARING = 2;
+	final static int PREPARED = 3;
+	final static int RUNNING = 4;
+	final static int FINISHED = 5;
+	
+	private int runnerStatus = -1;
+	private long preparedUserCountThisThread=0;
+	private long createdUserCountThisThread=0;
+	
 	final static EntityManagerFactory emf; 
 	EntityManager em = null;
 	EntityTransaction ex = null;
@@ -42,21 +52,69 @@ public class HRunner extends Thread{
 		this.hTestConfig=hTestConfig;
 		//this.emf =Persistence.createEntityManagerFactory("HelloWorldPU");
 		this.em = emf.createEntityManager();
-
-	}
-	
-	protected void prepare(){}
-	
-	protected void runTest(){
+		
+		runnerStatus = INITED;
+		
 		this.start();
 
 	}
 	
-	public void run(){
-		log.info(this.threadId + " runTest");
-		while (true){
-			this.insert();
+	protected void prepare(){
+		
+		if (this.runnerStatus == INITED){
+			this.runnerStatus = PREPARING;
+			log.info("runner " + this.threadId + " PREPARING");
+		} else {
+			log.fatal("runner status error. prepare() called while runner not in INITED status");
 		}
+		
+	}
+	
+	protected boolean prepared(){
+		return this.runnerStatus == PREPARED;
+	}
+	
+	protected void runTest(){
+		
+		if (this.runnerStatus == PREPARED){
+			this.runnerStatus = RUNNING;
+			log.info("runner " + this.threadId + " RUNNING");
+		} else {
+			log.fatal("runner status error. runTest() called while runner not in PREPARED status");
+		}
+
+	}
+	
+	public void run(){
+		log.info(this.threadId + " run()");
+		
+		while (true){
+			switch (this.runnerStatus){
+				case PREPARING:
+					this.insert();
+					this.preparedUserCountThisThread ++;
+					if ( this.preparedUserCountThisThread > this.hTestConfig.userCountStart / this.hTestConfig.threadsCount){
+						this.runnerStatus = PREPARED;
+						this.createdUserCountThisThread=this.preparedUserCountThisThread;
+						log.info("runner " + this.threadId + " prepared");
+					}
+					break;
+				case RUNNING:
+					//log.info("runner " + this.threadId + " case RUNNING:");
+					this.insert();
+					this.createdUserCountThisThread ++;
+					if ( this.createdUserCountThisThread > this.hTestConfig.userCountStop / this.hTestConfig.threadsCount){
+						this.runnerStatus = FINISHED;
+						log.info("runner " + this.threadId + " finished");
+					}
+					break;
+				case FINISHED:
+					return;
+				default:
+					
+			}
+		}
+		
 	}
 	
 	private void insert(){

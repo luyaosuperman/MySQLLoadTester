@@ -14,8 +14,8 @@ public class Application {
 	public static void main(String[] args) {
 		//int testType = 1;
 		int totalThreads = 40;
-		int runCount = 30000;
-		int rowCount = 3000000;
+		int runCount = 300000000;
+		int rowCount = 300000000;
 		
 		String tableName = "testLt";
 		String createTableSql = "create table testLt (" +
@@ -64,7 +64,7 @@ public class Application {
 		int updatePct = 0;
 		
 		
-		int initDataAmount = 10000;
+		int initDataAmount = 100;
 		
 		
 		TestInfo testInfo = new TestInfo(totalThreads,runCount,rowCount,"test",
