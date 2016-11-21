@@ -100,18 +100,25 @@ public class HRunner extends Thread{
 					}
 					break;
 				case RUNNING:
-					//log.info("runner " + this.threadId + " case RUNNING:");
+					
 					this.insert();
 					this.createdUserCountThisThread ++;
 					if ( this.createdUserCountThisThread > this.hTestConfig.userCountStop / this.hTestConfig.threadsCount){
 						this.runnerStatus = FINISHED;
 						log.info("runner " + this.threadId + " finished");
 					}
+					//log.info("runner " + this.threadId + " this.createdUserCountThisThread: " + this.createdUserCountThisThread);
+					//log.info("runner " + this.threadId + " case RUNNING:");
 					break;
 				case FINISHED:
 					return;
 				default:
-					
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 			}
 		}
 		
