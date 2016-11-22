@@ -25,8 +25,11 @@ public class HRunner extends Thread{
 	final static int FINISHED = 5;
 	
 	private int runnerStatus = -1;
+	
 	private long preparedUserCountThisThread=0;
 	private long createdUserCountThisThread=0;
+	private long updatedUserCountThisThread=0;
+	private long selectedUserCountThisThread=0;
 	
 	final static EntityManagerFactory emf; 
 	EntityManager em = null;
@@ -85,12 +88,22 @@ public class HRunner extends Thread{
 
 	}
 	
+	private void action(){
+		//decide to insert,update or select
+		this.insert();
+	}
+	
+	private boolean ifStop(){
+		return this.createdUserCountThisThread > this.hTestConfig.userCountStop / this.hTestConfig.threadsCount;
+	}
+	
 	public void run(){
 		log.info(this.threadId + " run()");
 		
 		while (true){
 			switch (this.runnerStatus){
 				case PREPARING:
+					
 					this.insert();
 					this.preparedUserCountThisThread ++;
 					if ( this.preparedUserCountThisThread > this.hTestConfig.userCountStart / this.hTestConfig.threadsCount){
@@ -101,9 +114,9 @@ public class HRunner extends Thread{
 					break;
 				case RUNNING:
 					
-					this.insert();
+					this.action();
 					this.createdUserCountThisThread ++;
-					if ( this.createdUserCountThisThread > this.hTestConfig.userCountStop / this.hTestConfig.threadsCount){
+					if ( this.ifStop() ){
 						this.runnerStatus = FINISHED;
 						log.info("runner " + this.threadId + " finished");
 					}
@@ -138,6 +151,14 @@ public class HRunner extends Thread{
 			this.em.persist(hUserRecord);
 		}
 		this.ex.commit();
+		
+	}
+	
+	private void update(){
+		
+	}
+	
+	private void select(){
 		
 	}
 	

@@ -48,8 +48,11 @@ public class HTestController extends Thread implements TestController {
 			this.hRunnerArray[i]=new HRunner(this.hTestConfig);
 		}
 		
+		this.hTestStatus.setStatus(TestStatus.PREPARING);
 		this.prepareTest();
+		this.hTestStatus.setStatus(TestStatus.RUNNING);
 		this.runTest();
+		this.hTestStatus.setStatus(TestStatus.FINISHED);
 		
 	}
 

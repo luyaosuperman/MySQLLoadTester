@@ -11,6 +11,8 @@ public interface TestStatus {
 	
 	public int getStatus();
 	
+	public void setStatus(int status);
+	
 	public static final int PENDING = 0;
 	public static final int PREPARING = 1;
 	public static final int RUNNING = 2;

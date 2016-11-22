@@ -2,6 +2,7 @@ package com.MysqlLoadTest.ExecutionUnit.HibernateVersion;
 
 import java.util.Map;
 
+import com.MysqlLoadTest.Interfaces.StatusItem;
 import com.MysqlLoadTest.Interfaces.TestConfig;
 import com.MysqlLoadTest.Interfaces.TestStatus;
 
@@ -9,12 +10,17 @@ public class HTestStatus implements TestStatus{
 
 	private int id;
 	
-	private long userCount;
-	private long userRecordCount;
-	private int  intervalInsertCount;
-	private int  intervalUpdateCount;
-	private int  intervalSelectCount;
-	private int  intervalDeleteCount;
+	@StatusItem private long userCount;
+	@StatusItem private long userRecordCount;
+	
+	
+	
+	@StatusItem private int  intervalInsertCount;
+	@StatusItem private int  intervalUpdateCount;
+	@StatusItem private int  intervalSelectCount;
+	@StatusItem private int  intervalDeleteCount;
+	
+	private int status = TestStatus.PENDING;
 	
 	private TestConfig testConfig;
 	
@@ -40,6 +46,11 @@ public class HTestStatus implements TestStatus{
 	public void setTestConfig(TestConfig testConfig) {
 		this.testConfig = testConfig;
 		
+	}
+
+	@Override
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
 }
