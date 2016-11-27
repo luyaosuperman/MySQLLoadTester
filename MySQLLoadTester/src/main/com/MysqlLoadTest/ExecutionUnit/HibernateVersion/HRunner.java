@@ -73,7 +73,7 @@ public class HRunner extends Thread{
 		
 	}
 	
-	protected boolean prepared(){
+	protected boolean isPrepared(){
 		return this.runnerStatus == PREPARED;
 	}
 	
@@ -86,6 +86,10 @@ public class HRunner extends Thread{
 			log.fatal("runner status error. runTest() called while runner not in PREPARED status");
 		}
 
+	}
+	
+	protected boolean isFinished(){
+		return this.runnerStatus == FINISHED;
 	}
 	
 	private void action(){

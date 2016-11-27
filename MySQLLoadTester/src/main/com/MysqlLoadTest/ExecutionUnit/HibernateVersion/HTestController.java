@@ -74,7 +74,7 @@ public class HTestController extends Thread implements TestController {
 		while(true){
 			int preparedCount = 0;
 			for (HRunner hRunner: hRunnerArray){
-				if (hRunner.prepared()){
+				if (hRunner.isPrepared()){
 					preparedCount ++;
 				}
 				if (preparedCount == hRunnerArray.length){
@@ -94,6 +94,25 @@ public class HTestController extends Thread implements TestController {
 	private void runTest(){
 		for (HRunner hRunner: hRunnerArray){
 			hRunner.runTest();
+		}
+		
+		while(true){
+			int finishedCount = 0;
+			for (HRunner hRunner: hRunnerArray){
+				if (hRunner.isFinished()){
+					finishedCount ++;
+				}
+				if (finishedCount == hRunnerArray.length){
+					log.info("all runners finished");
+					return;
+				}
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
