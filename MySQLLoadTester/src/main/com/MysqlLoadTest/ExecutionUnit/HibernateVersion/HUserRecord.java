@@ -22,6 +22,11 @@ public class HUserRecord {
 	@GeneratedValue(strategy=GenerationType.IDENTITY) 
 	@Column(name = "HUSER_RECORD")
 	private int id;
+	
+	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE},targetEntity = HUser.class, fetch=FetchType.EAGER)
+	@JoinColumn(name = "USER_ID")
+	//@Column(name="USER_ID")
+	@Access(AccessType.PROPERTY)
 	private HUser hUser;
 	
 	@GeneratedData(stringLength=200) private String userData0;
@@ -36,12 +41,12 @@ public class HUserRecord {
 	@GeneratedData(stringLength=200) private String userData9;
 	
 	
-	HUserRecord(){ GenerateData.generateData(this);	}
+	HUserRecord(){ this.updateValue();	}
 	
-	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE},targetEntity = HUser.class, fetch=FetchType.EAGER)
-	@JoinColumn(name = "USER_ID")
-	//@Column(name="USER_ID")
-	@Access(AccessType.PROPERTY)
+	public void updateValue(){
+		GenerateData.generateData(this);
+	}
+	
 	public HUser gethUser() {return hUser;	}
 	public void sethUser(HUser hUser) {this.hUser = hUser;}
 	

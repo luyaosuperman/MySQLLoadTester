@@ -1,5 +1,8 @@
 package com.MysqlLoadTest.ExecutionUnit.HibernateVersion;
 
+import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -8,6 +11,7 @@ import javax.persistence.Query;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 
 public class HRunner extends Thread{
 
@@ -27,10 +31,19 @@ public class HRunner extends Thread{
 	private int runnerStatus = -1;
 	
 	private long preparedUserCountThisThread=0;
-	private long createdUserCountThisThread=0;
-	private long updatedUserCountThisThread=0;
-	private long selectedUserCountThisThread=0;
+	private long actionCountThisThread = 0;
+
+	public class Stastics{
+		public long insertedUserCountThisThread=0;
+		public long updatedUserCountThisThread=0;
+		public long selectedUserCountThisThread=0;
+	}
 	
+	Stastics statics = new Stastics();
+	
+	private long minId = -1,maxId = -1;
+	
+
 	final static EntityManagerFactory emf; 
 	EntityManager em = null;
 	EntityTransaction ex = null;
@@ -93,12 +106,22 @@ public class HRunner extends Thread{
 	}
 	
 	private void action(){
-		//decide to insert,update or select
-		this.insert();
+		int randomNum = ThreadLocalRandom.current().nextInt(100)+1;//1~100
+		//insert:0-insert
+		if (randomNum <=this.hTestConfig.insertPct){
+			//insert
+			this.insert();
+		}else if (randomNum <=this.hTestConfig.insertPct + this.hTestConfig.updatePct){
+			//update
+			this.update();
+		}else{
+			//select
+			this.select();
+		}
 	}
 	
 	private boolean ifStop(){
-		return this.createdUserCountThisThread > this.hTestConfig.userCountStop / this.hTestConfig.threadsCount;
+		return this.actionCountThisThread > this.hTestConfig.userCountStop / this.hTestConfig.threadsCount;
 	}
 	
 	public void run(){
@@ -112,14 +135,14 @@ public class HRunner extends Thread{
 					this.preparedUserCountThisThread ++;
 					if ( this.preparedUserCountThisThread > this.hTestConfig.userCountStart / this.hTestConfig.threadsCount){
 						this.runnerStatus = PREPARED;
-						this.createdUserCountThisThread=this.preparedUserCountThisThread;
+						this.statics.insertedUserCountThisThread=this.preparedUserCountThisThread;
 						log.info("runner " + this.threadId + " prepared");
 					}
 					break;
 				case RUNNING:
 					
 					this.action();
-					this.createdUserCountThisThread ++;
+					this.actionCountThisThread ++;
 					if ( this.ifStop() ){
 						this.runnerStatus = FINISHED;
 						log.info("runner " + this.threadId + " finished");
@@ -141,14 +164,27 @@ public class HRunner extends Thread{
 		
 	}
 	
+	private void setMinMaxId(long id){
+		if (this.minId < 0) {this.minId = id;}
+		
+		this.maxId = id;
+	}
+	
+	private long getRandomId(){
+		return ThreadLocalRandom.current().nextLong(this.minId, this.maxId); // omit +1
+		
+	}
+	
 	private void insert(){
 		
-		//log.info(this.threadId + " Insert");
+		//log.info("Thread " + this.threadId + " Insert");
+		this.statics.insertedUserCountThisThread ++;
 		
 		this.ex = this.em.getTransaction();
 		this.ex.begin();
 		HUser hUser = new HUser();
 		this.em.persist(hUser);
+		this.setMinMaxId(hUser.getId());
 		for (int i=0;i< this.hTestConfig.userRecordPerUser;i++){
 			HUserRecord hUserRecord = new HUserRecord(); 
 			hUserRecord.sethUser(hUser);
@@ -160,11 +196,59 @@ public class HRunner extends Thread{
 	
 	private void update(){
 		
-	}
-	
-	private void select(){
+		//log.info("Thread " + this.threadId + " Update");
+		this.statics.updatedUserCountThisThread ++ ;
+		
+		HUser hUser = this.selectHUser();
+		if (hUser == null) {return;}
+		Set<HUserRecord> hUserRecordSet = selectHUserRecord(hUser);
+		
+		this.ex = this.em.getTransaction();
+		this.ex.begin();
+			hUser.updateValue();
+			em.persist(hUser);
+			for(HUserRecord hUserRecord: hUserRecordSet){
+				hUserRecord.updateValue();
+				em.persist(hUserRecord);
+			}
+		
+		this.ex.commit();
 		
 	}
 	
+	
+	private void select(){
+		
+		//log.info("Thread " + this.threadId + " Select");
+		this.statics.selectedUserCountThisThread ++;
+		
+		this.selectHUserRecord(this.selectHUser());
+	}
+	
+	private HUser selectHUser(){
+		long id = this.getRandomId();
+		HUser hUser = null;
+		if (id >= 0) {
+			hUser = this.em.find(HUser.class, id);
+		}
+		return hUser;
+	}
+	
+	private Set<HUserRecord> selectHUserRecord( HUser hUser ){
+		if (hUser == null) { return null; }
+		else { return hUser.getHUserRecordSet(); }
+	}
+	
+	
+	public Stastics getStastics(){
+		try{
+			this.suspend();
+			return this.statics;
+		}
+		finally{
+			this.statics = new Stastics();
+			this.resume();
+		}
+	}
 	
 }

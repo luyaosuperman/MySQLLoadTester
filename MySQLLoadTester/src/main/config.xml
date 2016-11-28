@@ -3,13 +3,13 @@
 
 <HTestConfig>
 	<userCountStart>1000</userCountStart>
-	<userCountStop>2000</userCountStop>
+	<userCountStop>2000000</userCountStop>
 	<userRecordPerUser>10</userRecordPerUser>
-	<threadsCount>4</threadsCount>
-	<insertPct>100</insertPct>
-	<selectPct>0</selectPct>
+	<threadsCount>10</threadsCount>
+	<insertPct>30</insertPct>
+	<selectPct>30</selectPct>
 	<deletePct>0</deletePct>
-	<updatePct>0</updatePct>
+	<updatePct>40</updatePct>
 	
 	<usernameLength>255</usernameLength>
 	<userDataLength>255</userDataLength>

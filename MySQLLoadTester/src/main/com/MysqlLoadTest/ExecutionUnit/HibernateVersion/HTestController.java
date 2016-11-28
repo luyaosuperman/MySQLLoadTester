@@ -97,22 +97,40 @@ public class HTestController extends Thread implements TestController {
 		}
 		
 		while(true){
-			int finishedCount = 0;
-			for (HRunner hRunner: hRunnerArray){
-				if (hRunner.isFinished()){
-					finishedCount ++;
-				}
-				if (finishedCount == hRunnerArray.length){
-					log.info("all runners finished");
-					return;
-				}
-			}
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+			int finishedCount = 0;
+			long insertedUserCountThisInterval=0;
+			long updatedUserCountThisInterval=0;
+			long selectedUserCountThisInterval=0;
+			
+			for (HRunner hRunner: hRunnerArray){
+				if (hRunner.isFinished()){
+					finishedCount ++;
+				}
+				
+				HRunner.Stastics stastics = hRunner.getStastics();
+				insertedUserCountThisInterval += stastics.insertedUserCountThisThread;
+				updatedUserCountThisInterval  += stastics.updatedUserCountThisThread;
+				selectedUserCountThisInterval += stastics.selectedUserCountThisThread;
+				
+			}
+			
+			log.info("Interval insert: " + insertedUserCountThisInterval + " update : " + updatedUserCountThisInterval + " select : " + selectedUserCountThisInterval);
+			
+			if (finishedCount == hRunnerArray.length){
+				log.info("all runners finished");
+				return;
+			}
+			
+			
+			
+
 		}
 	}
 
