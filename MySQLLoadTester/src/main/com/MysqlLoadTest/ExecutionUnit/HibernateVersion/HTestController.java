@@ -2,11 +2,14 @@ package com.MysqlLoadTest.ExecutionUnit.HibernateVersion;
 
 import com.MysqlLoadTest.Interfaces.TestController;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.MysqlLoadTest.Interfaces.TestConfig;
-import com.MysqlLoadTest.Interfaces.TestStatus;
+import com.MysqlLoadTest.Interfaces.TestStatusManager;
 
 public class HTestController extends Thread implements TestController {
 	
@@ -15,12 +18,22 @@ public class HTestController extends Thread implements TestController {
 	
 	private HRunner[] hRunnerArray = null;
 	private HTestConfig hTestConfig = null;
-	private HTestStatus hTestStatus = null;
+	private HTestStatusManager hTestStatus = null;
+	
+	private EntityManager em = null;
+	private EntityTransaction ex = null;
 	
 	HTestController(){
 		this.start();
 		this.hTestConfig = new HTestConfig();
-		this.hTestStatus = new HTestStatus();
+		this.hTestStatus = new HTestStatusManager(this.hTestConfig);
+		
+		this.em = HRunner.emf.createEntityManager();
+		
+		this.ex = this.em.getTransaction();
+		this.ex.begin();
+		this.em.persist(this.hTestConfig);
+		this.ex.commit();
 		
 	}
 	
@@ -30,7 +43,7 @@ public class HTestController extends Thread implements TestController {
 	}
 	
 	@Override
-	public TestStatus getTestStatus() {
+	public TestStatusManager getTestStatus() {
 		return this.hTestStatus;
 	}
 
@@ -45,14 +58,14 @@ public class HTestController extends Thread implements TestController {
 		
 		this.hRunnerArray = new HRunner[this.hTestConfig.threadsCount];
 		for (int i=0;i<this.hTestConfig.threadsCount;i++){
-			this.hRunnerArray[i]=new HRunner(this.hTestConfig);
+			this.hRunnerArray[i]=new HRunner(this.hTestConfig, this.hTestStatus);
 		}
 		
-		this.hTestStatus.setStatus(TestStatus.PREPARING);
+		this.hTestStatus.setStatus(TestStatusManager.PREPARING);
 		this.prepareTest();
-		this.hTestStatus.setStatus(TestStatus.RUNNING);
+		this.hTestStatus.setStatus(TestStatusManager.RUNNING);
 		this.runTest();
-		this.hTestStatus.setStatus(TestStatus.FINISHED);
+		this.hTestStatus.setStatus(TestStatusManager.FINISHED);
 		
 	}
 
@@ -105,30 +118,34 @@ public class HTestController extends Thread implements TestController {
 			}
 			
 			int finishedCount = 0;
-			long insertedUserCountThisInterval=0;
+			/*long insertedUserCountThisInterval=0;
 			long updatedUserCountThisInterval=0;
-			long selectedUserCountThisInterval=0;
+			long selectedUserCountThisInterval=0;*/
 			
 			for (HRunner hRunner: hRunnerArray){
 				if (hRunner.isFinished()){
 					finishedCount ++;
 				}
 				
-				HRunner.Stastics stastics = hRunner.getStastics();
+				/*HRunner.Stastics stastics = hRunner.getStastics();
 				insertedUserCountThisInterval += stastics.insertedUserCountThisThread;
 				updatedUserCountThisInterval  += stastics.updatedUserCountThisThread;
-				selectedUserCountThisInterval += stastics.selectedUserCountThisThread;
+				selectedUserCountThisInterval += stastics.selectedUserCountThisThread;*/
 				
 			}
 			
-			log.info("Interval insert: " + insertedUserCountThisInterval + " update : " + updatedUserCountThisInterval + " select : " + selectedUserCountThisInterval);
+			
+			/*this.ex = this.em.getTransaction();
+			this.ex.begin();
+			this.em.persist(this.hTestStatus);
+			this.ex.commit();*/
+			
+			//log.info("Interval insert: " + insertedUserCountThisInterval + " update : " + updatedUserCountThisInterval + " select : " + selectedUserCountThisInterval);
 			
 			if (finishedCount == hRunnerArray.length){
 				log.info("all runners finished");
 				return;
 			}
-			
-			
 			
 
 		}

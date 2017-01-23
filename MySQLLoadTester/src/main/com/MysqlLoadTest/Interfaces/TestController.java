@@ -8,7 +8,7 @@ public interface TestController {
 	
 	public void cancelTest();
 	
-	public TestStatus getTestStatus();
+	public TestStatusManager getTestStatus();
 	
 	public int getTestIdentity();
 	

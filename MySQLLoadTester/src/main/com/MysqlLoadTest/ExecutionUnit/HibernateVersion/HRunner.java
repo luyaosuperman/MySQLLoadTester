@@ -1,5 +1,6 @@
 package com.MysqlLoadTest.ExecutionUnit.HibernateVersion;
 
+import java.lang.reflect.Field;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -21,6 +22,7 @@ public class HRunner extends Thread{
 	int threadId = -1;
 	
 	HTestConfig hTestConfig = null;
+	HTestStatusManager hTestStatus = null;
 	
 	final static int INITED = 1;
 	final static int PREPARING = 2;
@@ -32,40 +34,28 @@ public class HRunner extends Thread{
 	
 	private long preparedUserCountThisThread=0;
 	private long actionCountThisThread = 0;
-
-	public class Stastics{
-		public long insertedUserCountThisThread=0;
-		public long updatedUserCountThisThread=0;
-		public long selectedUserCountThisThread=0;
-	}
+	
+	long reportMillisInterval = 100;
+	long lastReportMillis = System.currentTimeMillis();
 	
 	Stastics statics = new Stastics();
 	
 	private long minId = -1,maxId = -1;
 	
 
-	final static EntityManagerFactory emf; 
+	final static EntityManagerFactory emf = Persistence.createEntityManagerFactory("HelloWorldPU");; 
 	EntityManager em = null;
 	EntityTransaction ex = null;
 	
-	static{
-		emf = Persistence.createEntityManagerFactory("HelloWorldPU");
-		/*EntityManager em = emf.createEntityManager();
-		EntityTransaction ex = em.getTransaction();
-		ex.begin();
-		String[] stringQuerys = {"DELETE FROM HUserRecord","DELETE FROM HUser"};
-		for (String stringQuery: stringQuerys){
-			Query query = em.createQuery(stringQuery);
-			query.executeUpdate();
-		}
-		ex.commit();*/
-		
-	}
+	/*static{
+		emf = Persistence.createEntityManagerFactory("HelloWorldPU");	
+	}*/
 	
-	HRunner(HTestConfig hTestConfig){
+	HRunner(HTestConfig hTestConfig, HTestStatusManager hTestStatus){
 		this.threadId = threadIdSeed++;
 		log.info(this.threadId + " Init HRunner");
 		this.hTestConfig=hTestConfig;
+		this.hTestStatus = hTestStatus;
 		//this.emf =Persistence.createEntityManagerFactory("HelloWorldPU");
 		this.em = emf.createEntityManager();
 		
@@ -118,6 +108,11 @@ public class HRunner extends Thread{
 			//select
 			this.select();
 		}
+		
+		if (System.currentTimeMillis() - this.lastReportMillis > this.reportMillisInterval){
+			this.reportStatics();
+			this.lastReportMillis = System.currentTimeMillis();
+		}
 	}
 	
 	private boolean ifStop(){
@@ -135,7 +130,7 @@ public class HRunner extends Thread{
 					this.preparedUserCountThisThread ++;
 					if ( this.preparedUserCountThisThread > this.hTestConfig.userCountStart / this.hTestConfig.threadsCount){
 						this.runnerStatus = PREPARED;
-						this.statics.insertedUserCountThisThread=this.preparedUserCountThisThread;
+						this.statics.intervalInsertCount=this.preparedUserCountThisThread;
 						log.info("runner " + this.threadId + " prepared");
 					}
 					break;
@@ -178,7 +173,7 @@ public class HRunner extends Thread{
 	private void insert(){
 		
 		//log.info("Thread " + this.threadId + " Insert");
-		this.statics.insertedUserCountThisThread ++;
+		this.statics.intervalInsertCount ++;
 		
 		this.ex = this.em.getTransaction();
 		this.ex.begin();
@@ -197,7 +192,7 @@ public class HRunner extends Thread{
 	private void update(){
 		
 		//log.info("Thread " + this.threadId + " Update");
-		this.statics.updatedUserCountThisThread ++ ;
+		this.statics.intervalUpdateCount ++ ;
 		
 		HUser hUser = this.selectHUser();
 		if (hUser == null) {return;}
@@ -220,7 +215,7 @@ public class HRunner extends Thread{
 	private void select(){
 		
 		//log.info("Thread " + this.threadId + " Select");
-		this.statics.selectedUserCountThisThread ++;
+		this.statics.intervalSelectCount ++;
 		
 		this.selectHUserRecord(this.selectHUser());
 	}
@@ -240,7 +235,7 @@ public class HRunner extends Thread{
 	}
 	
 	
-	public Stastics getStastics(){
+	/*public Stastics getStastics(){
 		try{
 			this.suspend();
 			return this.statics;
@@ -249,6 +244,20 @@ public class HRunner extends Thread{
 			this.statics = new Stastics();
 			this.resume();
 		}
+	}*/
+	
+	private void reportStatics(){
+		//log.info("update statics for thread " + this.threadId);
+		for(Field field: Stastics.class.getDeclaredFields()){
+			try {
+				this.hTestStatus.updateProgress(field.getName(), field.get(statics));
+				//log.info("updated " + field.getName() + " with value " + field.get(statics));
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		statics = new Stastics();
 	}
 	
 }

@@ -5,7 +5,7 @@ import java.util.Map;
 import javax.persistence.Entity;
 
 @Entity
-public interface TestStatus {
+public interface TestStatusManager {
 
 	public float getProgress();
 	
@@ -21,5 +21,7 @@ public interface TestStatus {
 	public void setTestConfig(TestConfig testConfig);
 	
 	public Map<String,Object> getReport();
+	
+	public void updateProgress(String item, Object value);
 	
 }

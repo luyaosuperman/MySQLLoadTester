@@ -4,6 +4,14 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,10 +21,15 @@ import com.MysqlLoadTest.Interfaces.TestConfig;
 import com.MysqlLoadTest.Utilities.ConfigLoader;
 import com.MysqlLoadTest.Utilities.LoadFromConfig;
 
+@Entity
+@Table(name="HTestConfig")
 public class HTestConfig implements TestConfig {
 	
 	private static Logger log = LogManager.getLogger(HTestConfig.class); 
 	
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY) 
+	@Column(name = "TEST_ID")
 	private int id;
 
 	@ConfigurableItem @LoadFromConfig protected long userCountStart;
@@ -35,6 +48,7 @@ public class HTestConfig implements TestConfig {
 	
 	@ConfigurableItem @LoadFromConfig String testComment;
 	
+	@Transient
 	private boolean configSet = false;
 	
 	public HTestConfig(){
@@ -89,9 +103,8 @@ public class HTestConfig implements TestConfig {
 	@Override
 	public int getTestIdentifier() {
 		// TODO Auto-generated method stub
-		return 0;
+		return this.id;
 	}
 
-	public int getId() {		return id;	}
 
 }
