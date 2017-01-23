@@ -31,14 +31,14 @@ public class HUserRecord {
 	
 	@GeneratedData(stringLength=200) private String userData0;
 	@GeneratedData(stringLength=200) private String userData1;
-	@GeneratedData(stringLength=200) private String userData2;
+	/*@GeneratedData(stringLength=200) private String userData2;
 	@GeneratedData(stringLength=200) private String userData3;
 	@GeneratedData(stringLength=200) private String userData4;
 	@GeneratedData(stringLength=200) private String userData5;
 	@GeneratedData(stringLength=200) private String userData6;
 	@GeneratedData(stringLength=200) private String userData7;
 	@GeneratedData(stringLength=200) private String userData8;
-	@GeneratedData(stringLength=200) private String userData9;
+	@GeneratedData(stringLength=200) private String userData9;*/
 	
 	
 	HUserRecord(){ this.updateValue();	}

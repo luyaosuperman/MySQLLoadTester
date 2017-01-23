@@ -16,6 +16,9 @@ public class HTester {
 
 	public static void main(String[] args){
 		
+		System.setProperty("com.mchange.v2.log.MLog", "com.mchange.v2.log.FallbackMLog");
+
+		
 		TestController testController = new HTestController();
 		TestConfig testConfig = testController.getConfigObject();
 		Map<String,Object> configList = testConfig.getConfigItems();
