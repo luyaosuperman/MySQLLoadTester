@@ -15,7 +15,7 @@ import com.MysqlLoadTest.Utilities.GenerateData;
 import com.MysqlLoadTest.Utilities.GeneratedData;
 
 @Entity
-public class HUser {
+public class HUser  implements java.io.Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY) 
@@ -26,9 +26,9 @@ public class HUser {
 		return this.id;
 	}
 	
-	@GeneratedData(stringLength=100) private String username;
-	@GeneratedData(stringLength=100) private String userdata1;
-	@GeneratedData(stringLength=100) private String userdata2;
+	@GeneratedData(stringLength=10) private String username;
+	@GeneratedData(stringLength=10) private String userdata1;
+	/*@GeneratedData(stringLength=100) private String userdata2;
 	@GeneratedData(stringLength=100) private String userdata3;
 	@GeneratedData(stringLength=100) private String userdata4;
 	@GeneratedData(stringLength=100) private String userdata5;
@@ -36,7 +36,7 @@ public class HUser {
 	@GeneratedData(stringLength=100) private String userdata7;
 	@GeneratedData(stringLength=100) private String userdata8;
 	@GeneratedData(stringLength=100) private String userdata9;
-	@GeneratedData(stringLength=100) private String userdata10;
+	@GeneratedData(stringLength=100) private String userdata10;*/
 
 	HUser(){
 		//System.out.println("HUser init");

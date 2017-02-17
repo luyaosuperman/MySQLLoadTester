@@ -179,13 +179,19 @@ public class HRunner extends Thread{
 		this.ex.begin();
 		HUser hUser = new HUser();
 		this.em.persist(hUser);
+		this.ex.commit();
+		
 		this.setMinMaxId(hUser.getId());
 		for (int i=0;i< this.hTestConfig.userRecordPerUser;i++){
+			this.ex = this.em.getTransaction();
+			this.ex.begin();
 			HUserRecord hUserRecord = new HUserRecord(); 
 			hUserRecord.sethUser(hUser);
 			this.em.persist(hUserRecord);
+			this.ex.commit();
 		}
-		this.ex.commit();
+		//this.ex.commit();
+		
 		
 	}
 	

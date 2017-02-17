@@ -28,22 +28,34 @@ http://xmlns.jcp.org/xml/ns/persistence_2_1.xsd"> -->
             <property name="hibernate.use_sql_comments" value="true"/>
             
             
+            <!--
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
-            <!-- <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/hibernateplayground?serverTimezone=UTC&amp;createDatabaseIfNotExist=true&amp;socket==E:\MySQL Server 5.7\Data\mysql.sock" /> -->
-            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/hibernateplayground?serverTimezone=UTC&amp;createDatabaseIfNotExist=true" />
-            <!-- <property name="javax.persistence.jdbc.url" value="jdbc:mysql://test1.cquwj4tlhao5.ap-southeast-2.rds.amazonaws.com/hibernateplayground?serverTimezone=UTC&amp;createDatabaseIfNotExist=true" /> -->
-            <property name="javax.persistence.jdbc.user" value="root" />
-            <property name="javax.persistence.jdbc.password" value="Password123!" />
             <property name="dialect" value="org.hibernate.dialect.MySQLDialect" />
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/hibernateplayground?serverTimezone=UTC&amp;createDatabaseIfNotExist=true" />
+            -->
+            
+            <property name="javax.persistence.jdbc.driver" value="oracle.jdbc.driver.OracleDriver" />
+            <property name="dialect" value="org.hibernate.dialect.Oracle10gDialect" />
+            
+            <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@172.31.6.21:1521:orcl" />
+            <property name="hibernate.default_schema" value="system" />
+            
+            
+            <property name="javax.persistence.jdbc.user" value="system" />
+            <property name="javax.persistence.jdbc.password" value="Password123" />
+            
 
             <property name="hibernate.show_sql" value="false" />
+            <property name="format_sql" value="true" />
+			<property name="use_sql_comments" value="false" />
             <property name="hibernate.hbm2ddl.auto" value="create-drop" />
             
+            <!--<property name="hibernate.connection.provider_class" value="org.hibernate.c3p0.internal.C3P0ConnectionProvider" />
             <property name="hibernate.c3p0.min_size" value="5" />
   			<property name="hibernate.c3p0.max_size" value="100" />
   			<property name="hibernate.c3p0.timeout" value="300" />
   			<property name="hibernate.c3p0.max_statements" value="500" />
-  			<property name="hibernate.c3p0.idle_test_period" value="3000" />
+  			<property name="hibernate.c3p0.idle_test_period" value="3000" />-->
             
         </properties>
     </persistence-unit>

@@ -16,7 +16,7 @@ import com.MysqlLoadTest.Utilities.GenerateData;
 import com.MysqlLoadTest.Utilities.GeneratedData;
 
 @Entity
-public class HUserRecord {
+public class HUserRecord  implements java.io.Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY) 

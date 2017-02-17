@@ -10,5 +10,10 @@
       <AppenderRef ref="Console"/>
     </Root>
     
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder">
+      <level value="INFO" />
+      <appender-ref ref="Console" />
+    </logger>
+    
   </Loggers>
 </Configuration>
